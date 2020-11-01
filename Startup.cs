@@ -45,7 +45,7 @@ namespace WebBanHang
 
             services.AddSwaggerGen(setupAction =>
             {
-                setupAction.SwaggerDoc("v1", new OpenApiInfo
+                setupAction.SwaggerDoc("WebBanHang", new OpenApiInfo
                 {
                     Version = "v1",
                     Title = "Api đồ án website bán hàng",
@@ -66,6 +66,11 @@ namespace WebBanHang
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(setupAction => {
+                setupAction.SwaggerEndpoint("/swagger/WebBanHang/swagger.json", "WebBanHang");
+            });
 
             app.UseHttpsRedirection();
 
