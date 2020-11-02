@@ -15,7 +15,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 using WebBanHang.Data;
+using WebBanHang.Util.SwashBuckle;
 
 namespace WebBanHang
 {
@@ -43,20 +48,48 @@ namespace WebBanHang
             
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddSwaggerGen(setupAction =>
+            services.AddSwaggerGen(options =>
             {
-                setupAction.SwaggerDoc("WebBanHang", new OpenApiInfo
+                options.SwaggerDoc("WebBanHang", new OpenApiInfo
                 {
                     Version = "v1",
                     Title = "Api đồ án website bán hàng",
                     Description = "Api document của đồ án website bán hàng, happy coding!",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Hieu the developer",
+                        Email = "donghuuhieu1520@gmail.com",
+                    }
                 });
 
                 var xmlFilePath = Path.Combine(AppContext.BaseDirectory,
                     $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
 
-                setupAction.IncludeXmlComments(xmlFilePath);
+                options.IncludeXmlComments(xmlFilePath);
+
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                });
+                
+                options.AddRequiredAuthorizationHeader();
             });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(Configuration["AppSettings:SecretKey"])),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
