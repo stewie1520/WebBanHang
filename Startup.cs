@@ -20,7 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 using WebBanHang.Data;
-using WebBanHang.Util.SwashBuckle;
+using WebBanHang.Extensions.SwashBuckle;
 
 namespace WebBanHang
 {
@@ -108,6 +108,8 @@ namespace WebBanHang
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

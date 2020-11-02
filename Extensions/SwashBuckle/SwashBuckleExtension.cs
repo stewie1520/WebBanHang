@@ -1,7 +1,8 @@
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.Extensions.DependencyInjection;
+using WebBanHang.Util.SwashBuckle;
 
-namespace WebBanHang.Util.SwashBuckle
+namespace WebBanHang.Extensions.SwashBuckle
 {
     public static class SwashBuckleExtentions
     {
