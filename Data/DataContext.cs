@@ -15,6 +15,8 @@ namespace WebBanHang.Data
         {
             builder.Entity<Product>()
                 .HasIndex(p => new { p.Name });
+            builder.Entity<ProductOrder>()
+                .HasKey(po => new {po.OrderId, po.ProductId});
         }
     }
 }
