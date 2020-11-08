@@ -17,10 +17,10 @@ namespace WebBanHang.Models
         public string City { get; set; }
         [Required]
         public string District { get; set; }
-        public OrderStatus Status { get; set; } = OrderStatus.Pending;
+        public OrderStatus Status { get; set; } = OrderStatus.Ordering;
         public string Ward { get; set; }
         public User User { get; set; }
-        public int UserId { get; set; }
-        public IEnumerable<Product> Products { get; set; }
+        public int? UserId { get; set; }
+        public IEnumerable<ProductOrder> ProductOrders { get; set; }
     }
 }

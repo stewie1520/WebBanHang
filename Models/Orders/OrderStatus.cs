@@ -2,11 +2,16 @@ namespace WebBanHang.Models
 {
     public enum OrderStatus
     {
-        Pending,
-        InProcess,
-        Shipped,
+        Ordering,
+        UserConfirm,
+        ShopConfirm,
+        UserReject,
+        Packing,
+        WaitingShipper,
+        ShipperPicked,
+        Delivering,
         Delivered,
-        Completed,
-        Cancelled 
+        Returned,
+        Cancel 
     }
 }

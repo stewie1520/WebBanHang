@@ -3,17 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebBanHang.Migrations
 {
-    public partial class UserAddressOrderProductOrder : Migration
+    public partial class OrderPOUserAddress2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "OrderId",
-                table: "Products",
-                nullable: true);
-
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -26,16 +21,15 @@ namespace WebBanHang.Migrations
                     Phone = table.Column<string>(nullable: false),
                     Username = table.Column<string>(nullable: false),
                     PasswordHash = table.Column<byte[]>(nullable: false),
-                    PasswordSalt = table.Column<byte[]>(nullable: false),
-                    Type = table.Column<int>(nullable: false)
+                    PasswordSalt = table.Column<byte[]>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Address",
+                name: "Addresses",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -49,22 +43,21 @@ namespace WebBanHang.Migrations
                     City = table.Column<string>(nullable: false),
                     District = table.Column<string>(nullable: false),
                     Ward = table.Column<string>(nullable: false),
-                    UserId = table.Column<string>(nullable: true),
-                    UserId1 = table.Column<int>(nullable: false)
+                    UserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Address", x => x.Id);
+                    table.PrimaryKey("PK_Addresses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Address_User_UserId1",
-                        column: x => x.UserId1,
-                        principalTable: "User",
+                        name: "FK_Addresses_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Order",
+                name: "Orders",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -84,39 +77,40 @@ namespace WebBanHang.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Order", x => x.Id);
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Order_User_UserId",
+                        name: "FK_Orders_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductOrder",
+                name: "ProductOrders",
                 columns: table => new
                 {
-                    OrderId = table.Column<int>(nullable: false),
-                    ProductId = table.Column<int>(nullable: false),
-                    Id = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     IsDeleted = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false),
+                    OrderId = table.Column<int>(nullable: false),
+                    ProductId = table.Column<int>(nullable: false),
                     Price = table.Column<int>(nullable: false),
                     Quantity = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductOrder", x => new { x.OrderId, x.ProductId });
+                    table.PrimaryKey("PK_ProductOrders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductOrder_Order_OrderId",
+                        name: "FK_ProductOrders_Orders_OrderId",
                         column: x => x.OrderId,
-                        principalTable: "Order",
+                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductOrder_Products_ProductId",
+                        name: "FK_ProductOrders_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -124,59 +118,39 @@ namespace WebBanHang.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_OrderId",
-                table: "Products",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Address_UserId1",
-                table: "Address",
-                column: "UserId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Order_UserId",
-                table: "Order",
+                name: "IX_Addresses_UserId",
+                table: "Addresses",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOrder_ProductId",
-                table: "ProductOrder",
-                column: "ProductId");
+                name: "IX_Orders_UserId",
+                table: "Orders",
+                column: "UserId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Products_Order_OrderId",
-                table: "Products",
-                column: "OrderId",
-                principalTable: "Order",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductOrders_OrderId",
+                table: "ProductOrders",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductOrders_ProductId",
+                table: "ProductOrders",
+                column: "ProductId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Products_Order_OrderId",
-                table: "Products");
+            migrationBuilder.DropTable(
+                name: "Addresses");
 
             migrationBuilder.DropTable(
-                name: "Address");
+                name: "ProductOrders");
 
             migrationBuilder.DropTable(
-                name: "ProductOrder");
+                name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Order");
-
-            migrationBuilder.DropTable(
-                name: "User");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Products_OrderId",
-                table: "Products");
-
-            migrationBuilder.DropColumn(
-                name: "OrderId",
-                table: "Products");
+                name: "Users");
         }
     }
 }

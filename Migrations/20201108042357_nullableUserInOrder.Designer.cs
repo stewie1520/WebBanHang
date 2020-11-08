@@ -10,8 +10,8 @@ using WebBanHang.Data;
 namespace WebBanHang.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20201106084054_User-Address-Order-ProductOrder")]
-    partial class UserAddressOrderProductOrder
+    [Migration("20201108042357_nullableUserInOrder")]
+    partial class nullableUserInOrder
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -57,10 +57,7 @@ namespace WebBanHang.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId1")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Ward")
@@ -69,9 +66,9 @@ namespace WebBanHang.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("Address");
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("WebBanHang.Models.Category", b =>
@@ -149,7 +146,7 @@ namespace WebBanHang.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Ward")
@@ -159,7 +156,7 @@ namespace WebBanHang.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("WebBanHang.Models.Product", b =>
@@ -194,9 +191,6 @@ namespace WebBanHang.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
@@ -215,8 +209,6 @@ namespace WebBanHang.Migrations
 
                     b.HasIndex("Name");
 
-                    b.HasIndex("OrderId");
-
                     b.HasIndex("ParentId");
 
                     b.ToTable("Products");
@@ -224,22 +216,24 @@ namespace WebBanHang.Migrations
 
             modelBuilder.Entity("WebBanHang.Models.ProductOrder", b =>
                 {
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -248,11 +242,13 @@ namespace WebBanHang.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("OrderId", "ProductId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductOrder");
+                    b.ToTable("ProductOrders");
                 });
 
             modelBuilder.Entity("WebBanHang.Models.User", b =>
@@ -287,9 +283,6 @@ namespace WebBanHang.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -299,14 +292,14 @@ namespace WebBanHang.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("WebBanHang.Models.Address", b =>
                 {
                     b.HasOne("WebBanHang.Models.User", "User")
                         .WithMany("Addresses")
-                        .HasForeignKey("UserId1")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -322,9 +315,7 @@ namespace WebBanHang.Migrations
                 {
                     b.HasOne("WebBanHang.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("WebBanHang.Models.Product", b =>
@@ -335,10 +326,6 @@ namespace WebBanHang.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebBanHang.Models.Order", null)
-                        .WithMany("Products")
-                        .HasForeignKey("OrderId");
-
                     b.HasOne("WebBanHang.Models.Product", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId");
@@ -347,7 +334,7 @@ namespace WebBanHang.Migrations
             modelBuilder.Entity("WebBanHang.Models.ProductOrder", b =>
                 {
                     b.HasOne("WebBanHang.Models.Order", "Order")
-                        .WithMany()
+                        .WithMany("ProductOrders")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
