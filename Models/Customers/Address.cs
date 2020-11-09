@@ -6,8 +6,6 @@ namespace WebBanHang.Models
     public class Address : BaseModel
     {
         [Required]
-        public string FullName { get; set; }
-        [Required]
         public string Phone { get; set; }
         [Required]
         public string Street { get; set; }
@@ -18,6 +16,6 @@ namespace WebBanHang.Models
         [Required]
         public string Ward { get; set; }
         [Required]
-        public User User { get; set; }
+        public Customer Customer { get; set; }
     }
 }

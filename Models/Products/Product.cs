@@ -17,6 +17,6 @@ namespace WebBanHang.Models
         public Category Category { get; set; }
         public Product Parent { get; set; }
         public IEnumerable<Product> Children { get; set; }
-        public ProductStatus Status { get; set; } = ProductStatus.StopSelling;
+        public ProductStatus Status { get; set; } = ProductStatus.Private;
     }
 }

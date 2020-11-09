@@ -1,6 +1,6 @@
 namespace WebBanHang.Models
 {
-    public enum OrderStatus
+    public enum BasketStatus
     {
         Ordering,
         UserConfirm,

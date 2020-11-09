@@ -3,14 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebBanHang.Models
 {
-    public class User : BaseAccount
+    public class User
     {
         [Required]
         public string Name { get; set; }
+        [Required, EmailAddress]
         public string Email { get; set; }
-        [Required]
-        public string Phone { get; set; }
-        [Required]
-        public IEnumerable<Address> Addresses { get; set; }
+        public byte[] Password { get; set; }
+        public byte[] PasswordSalt { get; set; }
     }
 }
