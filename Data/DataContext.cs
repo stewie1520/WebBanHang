@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
+using WebBanHang.Extensions.DataContext;
 using WebBanHang.Models;
 
 namespace WebBanHang.Data

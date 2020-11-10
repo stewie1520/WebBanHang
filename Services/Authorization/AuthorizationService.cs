@@ -7,102 +7,147 @@ using WebBanHang.Data;
 using WebBanHang.Models;
 using WebBanHang.DTOs.User;
 using AutoMapper;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using WebBanHang.Extensions.DataContext;
 
 namespace WebBanHang.Services.Authorization
 {
-    public class AuthorizationService : IAuthorizationService
+    public partial class AuthorizationService : IAuthorizationService
     {
         private DataContext _context;
         private IMapper _mapper;
-        public AuthorizationService(DataContext context, IMapper mapper)
+        private readonly IConfiguration _config;
+        private readonly ILogger<AuthorizationService> _logger;
+
+        #region Constructor
+        public AuthorizationService(DataContext context, IMapper mapper, IConfiguration config, ILogger<AuthorizationService> logger)
         {
             _context = context;
             _mapper = mapper;
+            _config = config;
+            _logger = logger;
         }
+        #endregion
+
+        #region Login
+        /// <summary>
+        /// Login - Check if user existed and has correct password, generate a token for requested user
+        /// </summary>
+        /// <param name="userLogin"></param>
+        /// <returns></returns>
         public async Task<ServiceResponse<string>> Login(UserLoginDto userLogin)
         {
             var response = new ServiceResponse<string>();
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == userLogin.Email);
-
-            if (user == null)
+            try
             {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == userLogin.Email);
+
+                if (user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User or password incorrect";
+                    response.Code = ErrorCode.AUTH_INCORRECT_EMAIL_PASSWORD;
+
+                    return response;
+                }
+
+                var isPasswordCorrect = ComparePassword(userLogin.Password, user.Password, user.PasswordSalt);
+
+                if (!isPasswordCorrect)
+                {
+                    response.Success = false;
+                    response.Message = "User or password incorrect";
+                    response.Code = ErrorCode.AUTH_INCORRECT_EMAIL_PASSWORD;
+
+                    return response;
+                }
+
+
+                // TODO: return token;
+                response.Data = CreateToken(user);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex.StackTrace);
                 response.Success = false;
-                response.Message = "User or password incorrect";
+                response.Message = ex.Message;
+                response.Code = ErrorCode.AUTH_UNEXPECTED_ERROR;
 
                 return response;
             }
-
-            var isPasswordCorrect = ComparePassword(userLogin.Password, user.Password, user.PasswordSalt);
-
-            if (!isPasswordCorrect)
-            {
-                response.Success = false;
-                response.Message = "User or password incorrect";
-
-                return response;
-            }
-
-
-            // TODO: return token;
-            response.Data = "12345";
-            return response;
         }
+        #endregion
 
+        #region Register
+        /// <summary>
+        /// Register - Create new user
+        /// </summary>
+        /// <param name="userRegister"></param>
+        /// <returns></returns>
         public async Task<ServiceResponse<int>> Register(UserRegisterDto userRegister)
         {
             var response = new ServiceResponse<int>();
 
-            var user = _mapper.Map<User>(userRegister);
-
-            bool HasUserExisted = await UserExists(user.Email);
-
-            if (HasUserExisted)
+            try
             {
-                response.Success = false;
-                response.Message = "User already existed";
+                var user = _mapper.Map<User>(userRegister);
+
+                bool HasUserExisted = await UserExists(user.Email);
+
+                if (HasUserExisted)
+                {
+                    response.Success = false;
+                    response.Message = "User already existed";
+                    response.Code = ErrorCode.AUTH_USER_EXISTED;
+
+                    return response;
+                }
+
+                (user.Password, user.PasswordSalt) = CreateHashedPassword(userRegister.Password);
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangeWithValidationAsync();
+
+                response.Data = user.Id;
 
                 return response;
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex.StackTrace);
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.AUTH_UNEXPECTED_ERROR;
 
-            (user.Password, user.PasswordSalt) = CreateHashedPassword(userRegister.Password);
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-
-            response.Data = user.Id;
-
-            return response;
+                return response;
+            }
         }
+        #endregion
 
+        #region UserExists
+        /// <summary>
+        /// UserExists - Check if an user has already registed with email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public async Task<bool> UserExists(string email)
         {
-            return await _context.Users.AnyAsync(user => user.Email.ToLower() == email);
-        }
-
-        private (byte[] passwordHashed, byte[] passwordSalt) CreateHashedPassword(string password)
-        {
-            using var hmac = new System.Security.Cryptography.HMACSHA512();
-            byte[] passwordHashed = hmac.ComputeHash(
-                System.Text.Encoding.UTF8.GetBytes(password));
-
-            return (passwordHashed, hmac.Key);
-        }
-
-        private bool ComparePassword(string password, byte[] passwordHashed, byte[] passwordSalt)
-        {
-            using var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt);
-            var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-
-            if (computedHash.Length != passwordHashed.Length)
-                return false;
-
-            for (int i = 0; i < passwordHashed.Length; i++)
+            try
             {
-                if (computedHash[i] != passwordHashed[i])
-                    return false;
+                return await _context.Users.AnyAsync(user => user.Email.ToLower() == email);
             }
-
-            return true;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return false;
+            }
         }
+        #endregion
     }
 }

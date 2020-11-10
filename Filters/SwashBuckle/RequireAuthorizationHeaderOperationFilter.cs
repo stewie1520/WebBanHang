@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace WebBanHang.Util.SwashBuckle
+namespace WebBanHang.Filters.SwashBuckle
 {
     class RequiredAuthorizationHeaderOperationFilter : IOperationFilter
     {

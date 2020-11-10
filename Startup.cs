@@ -22,6 +22,7 @@ using System.Text;
 using WebBanHang.Data;
 using WebBanHang.Extensions.SwashBuckle;
 using WebBanHang.Services.Authorization;
+using WebBanHang.Filters;
 
 namespace WebBanHang
 {
@@ -43,7 +44,11 @@ namespace WebBanHang
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IAuthorizationService, AuthorizationService>();
-            services.AddControllers();
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(opt =>
+                {
+                    opt.InvalidModelStateResponseFactory = ValidateModelState.InvalidModelState;
+                });
 
             services.AddDbContext<DataContext>(optionBuilder =>
                 optionBuilder.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));

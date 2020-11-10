@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebBanHang.DTOs.User;
 using WebBanHang.Services.Authorization;
+using WebBanHang.Filters;
 
 namespace WebBanHang.Controllers
 {
