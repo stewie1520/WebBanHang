@@ -21,6 +21,8 @@ using System.Text;
 
 using WebBanHang.Data;
 using WebBanHang.Extensions.SwashBuckle;
+using WebBanHang.Services.Authorization;
+using WebBanHang.Filters;
 
 namespace WebBanHang
 {
@@ -41,7 +43,12 @@ namespace WebBanHang
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddScoped<IAuthorizationService, AuthorizationService>();
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(opt =>
+                {
+                    opt.InvalidModelStateResponseFactory = ValidateModelState.InvalidModelState;
+                });
 
             services.AddDbContext<DataContext>(optionBuilder =>
                 optionBuilder.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));

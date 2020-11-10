@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
+using WebBanHang.Extensions.DataContext;
 using WebBanHang.Models;
 
 namespace WebBanHang.Data
@@ -14,6 +17,7 @@ namespace WebBanHang.Data
         public DbSet<Basket> Orders { get; set; }
         public DbSet<BasketItem> ProductOrders { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Customer> Customers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

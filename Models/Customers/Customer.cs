@@ -15,6 +15,8 @@ namespace WebBanHang.Models
         public byte[] Password { get; set; }
         public byte[] PasswordSalt { get; set; }
 
+        public Gender Gender { get; set; } = Gender.Unknown;
+
         public IEnumerable<Address> Addresses { get; private set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
