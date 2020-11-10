@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebBanHang.Models
 {
-    public class User
+    public class User : BaseModel
     {
         [Required]
         public string Name { get; set; }
