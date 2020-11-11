@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using WebBanHang.Models.Products;
 
 namespace WebBanHang.Models
 {
@@ -10,13 +11,13 @@ namespace WebBanHang.Models
         public string Description { get; set; }
         [Required]
         public int Price { get; set; }
-        public string Avatar { get; set; }
         public bool IsVariant { get; set; } = false;
         public bool IsManageVariant { get; set; } = false;
         [Required]
         public Category Category { get; set; }
         public Product Parent { get; set; }
         public IEnumerable<Product> Children { get; set; }
+        public IEnumerable<ProductImage> Images { get; set; }
         public ProductStatus Status { get; set; } = ProductStatus.Private;
     }
 }
