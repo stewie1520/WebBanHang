@@ -69,7 +69,6 @@ namespace WebBanHang.Services.Authorization
                 }
 
 
-                // TODO: return token;
                 response.Data = CreateToken(user);
                 return response;
             }
