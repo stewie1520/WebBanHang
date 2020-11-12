@@ -15,5 +15,6 @@ namespace WebBanHang.Models
         AUTH_USER_EXISTED,
         AUTH_UNEXPECTED_ERROR = 199,
         FILE_UPLOAD_ERROR = 200,
+        FILE_UPLOAD_EXTENSION_NOT_PERMITTED = 299,
     }
 }
