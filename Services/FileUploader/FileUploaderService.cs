@@ -41,15 +41,6 @@ namespace WebBanHang.Services.FileUploader
             var response = new ServiceResponse<FileUpload>();
             try
             {
-                /*if (!ValidateFile(inputStream, fileName))
-                {
-                    response.Success = false;
-                    response.Message = "File extension is not permitted";
-                    response.Code = ErrorCode.FILE_UPLOAD_EXTENSION_NOT_PERMITTED;
-
-                    return response;
-                }
-*/
                 fileName = $"{Guid.NewGuid()}{DateTime.Now.ToString("yyyymmddMMss")}{fileName}";
 
                 S3Helper s3 = new S3Helper(_config);
@@ -77,7 +68,7 @@ namespace WebBanHang.Services.FileUploader
             }
         }
 
-        private bool ValidateFile(Stream inputStream, string fileName)
+        public bool Validate(Stream inputStream, string fileName)
         {
             string ext = Path.GetExtension(fileName).ToLowerInvariant();
 

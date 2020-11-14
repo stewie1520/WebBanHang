@@ -10,5 +10,6 @@ namespace WebBanHang.Services.FileUploader
     public interface IFileUploaderService
     {
         Task<ServiceResponse<FileUpload>> UploadImageAsync(Stream inputStream, string fileName, long fileLength, string contentType);
+        bool Validate(Stream inputStream, string fileName);
     }
 }

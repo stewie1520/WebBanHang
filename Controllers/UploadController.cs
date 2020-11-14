@@ -20,12 +20,19 @@ namespace WebBanHang.Controllers
             _service = service;
         }
 
-        [HttpPost("/")]
+        [HttpPost("")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
             using var memoryStream = new MemoryStream((int)file.Length);
             await file.CopyToAsync(memoryStream);
             memoryStream.Position = 0;
+
+            bool isValidFileExt = _service.Validate(memoryStream, file.FileName);
+
+            if (!isValidFileExt) {  
+
+            }
+
             var response = await _service.UploadImageAsync(memoryStream, file.FileName, file.Length, file.ContentType);
 
             if (!response.Success)
