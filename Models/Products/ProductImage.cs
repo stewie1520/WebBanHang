@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebBanHang.Models.Products
+namespace WebBanHang.Models
 {
     public class ProductImage : BaseModel
     {

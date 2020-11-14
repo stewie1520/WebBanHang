@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using WebBanHang.Models.Products;
 
 namespace WebBanHang.Models
 {

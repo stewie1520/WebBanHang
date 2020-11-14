@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Reflection;
 using WebBanHang.Extensions.DataContext;
 using WebBanHang.Models;
-using WebBanHang.Models.Products;
 
 namespace WebBanHang.Data
 {
