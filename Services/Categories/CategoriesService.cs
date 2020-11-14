@@ -14,14 +14,15 @@ namespace WebBanHang.Services.Categories
 {
     public class CategoriesService : ICategoriesService
     {
-        private DataContext _context;
-        private ILogger<CategoriesService> _logger;
-        private IMapper _mapper;
+        private readonly DataContext _context;
+        private readonly ILogger<CategoriesService> _logger;
+        private readonly IMapper _mapper;
 
-        public CategoriesService(DataContext context, IMapper mapper)
+        public CategoriesService(DataContext context, IMapper mapper, ILogger<CategoriesService> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<ServiceResponse<GetCategoryDto>> CreateCategoryAsync(CreateCategoryDto createCategoryDto)
@@ -55,6 +56,40 @@ namespace WebBanHang.Services.Categories
                 var getCategoryDto = _mapper.Map<GetCategoryDto>(category);
 
                 response.Data = getCategoryDto;
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.CATEGORY_UNEXPECTED_ERROR;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+        }
+
+        public async Task<ServiceResponse<int>> DeleteCategoryAsync(int categoryId)
+        {
+            var response = new ServiceResponse<int>();
+            try
+            {
+                var categories = await _context.Categories
+                    .Where(c => c.Id == categoryId || c.Parent.Id == categoryId)
+                    .Include(c => c.Parent)
+                    .ToListAsync();
+
+                var deletedCategories = categories.Select(c =>
+                {
+                    c.IsDeleted = true;
+                    return c;
+                });
+
+                _context.Categories.UpdateRange(deletedCategories);
+                await _context.SaveChangeWithValidationAsync();
+
+                response.Data = categoryId;
 
                 return response;
             }
@@ -134,7 +169,7 @@ namespace WebBanHang.Services.Categories
                 category.Name = updateCategoryDto.Name;
                 category.Tier = updateCategoryDto.Tier;
 
-                _context.Entry(category).State = EntityState.Modified;
+                _context.Categories.Update(category);
                 await _context.SaveChangeWithValidationAsync();
 
                 var getCategoryDto = _mapper.Map<GetCategoryDto>(category);

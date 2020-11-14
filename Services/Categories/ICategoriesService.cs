@@ -11,5 +11,6 @@ namespace WebBanHang.Services.Categories
         Task<ServiceResponse<GetCategoryDto>> CreateCategoryAsync(CreateCategoryDto category);
         Task<ServiceResponse<List<GetCategoryDto>>> GetAllCategoriesAsync();
         Task<ServiceResponse<GetCategoryDto>> UpdateCategoryAsync(UpdateCategoryDto category);
+        Task<ServiceResponse<int>> DeleteCategoryAsync(int categoryId);
     }
 }

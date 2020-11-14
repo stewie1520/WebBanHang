@@ -82,7 +82,14 @@ namespace WebBanHang.Controllers
         [HttpDelete("{categoryId}")]
         public async Task<IActionResult> Delete(int categoryId)
         {
-            return null;
+            var response = await _service.DeleteCategoryAsync(categoryId);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
         }
     }
 }
