@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WebBanHang.Models
 {
-    public class Category : BaseModel
+    public class Category : BaseModel, ISoftDelete
     {
         [Range(1, 3)]
         [Required]
@@ -16,5 +16,7 @@ namespace WebBanHang.Models
         public Category Parent { get; set; }
 
         public IEnumerable<Category> Children { get; set; }
+        [Required]
+        public bool IsDeleted { get; set; } = false;
     }
 }

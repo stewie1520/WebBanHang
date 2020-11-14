@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebBanHang.Models
 {
-    public class Customer : BaseModel, IValidatableObject
+    public class Customer : BaseModel, IValidatableObject, ISoftDelete
     {
         [Required]
         public int FullName { get; set; }
@@ -23,5 +23,7 @@ namespace WebBanHang.Models
         {
             throw new NotImplementedException();
         }
+        [Required]
+        public bool IsDeleted { get; set; } = false;
     }
 }

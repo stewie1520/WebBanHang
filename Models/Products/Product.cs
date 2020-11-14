@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebBanHang.Models
 {
-    public class Product : BaseModel
+    public class Product : BaseModel, ISoftDelete
     {
         [Required]
         public string Name { get; set; }
@@ -18,5 +18,7 @@ namespace WebBanHang.Models
         public IEnumerable<Product> Children { get; set; }
         public IEnumerable<ProductImage> Images { get; set; }
         public ProductStatus Status { get; set; } = ProductStatus.Private;
+        [Required]
+        public bool IsDeleted { get; set; } = false;
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WebBanHang.Models
 {
-    public class Basket : BaseModel
+    public class Basket : BaseModel, ISoftDelete
     {
         [Required]
         public int TotalPrice { get; set; }
@@ -16,5 +16,7 @@ namespace WebBanHang.Models
         public IEnumerable<BasketItem> BasketItems { get; private set; }
         [Required]
         public Customer Customer { get; set; }
+        [Required]
+        public bool IsDeleted { get; set; } = false;
     }
 }
