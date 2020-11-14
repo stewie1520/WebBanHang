@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebBanHang.Models
 {
-    public class User : BaseModel
+    public class User : BaseModel, ISoftDelete
     {
         [Required]
         public string Name { get; set; }
@@ -16,5 +16,7 @@ namespace WebBanHang.Models
         [Column(TypeName = "date")]
         public DateTime BirthDate { get; set; }
         public Gender Gender { get; set; } = Gender.Unknown;
+        [Required]
+        public bool IsDeleted { get; set; } = false;
     }
 }

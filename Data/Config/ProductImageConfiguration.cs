@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
-using WebBanHang.Models.Products;
+using WebBanHang.Models;
 
 namespace WebBanHang.Data.Config
 {

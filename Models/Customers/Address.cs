@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebBanHang.Models
 {
-    public class Address : BaseModel
+    public class Address : BaseModel, ISoftDelete
     {
         [Required]
         public string Phone { get; set; }
@@ -17,5 +17,7 @@ namespace WebBanHang.Models
         public string Ward { get; set; }
         [Required]
         public Customer Customer { get; set; }
+        [Required]
+        public bool IsDeleted { get; set; } = false;
     }
 }

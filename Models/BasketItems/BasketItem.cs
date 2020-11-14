@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebBanHang.Models
 {
-    public class BasketItem : BaseModel, IValidatableObject
+    public class BasketItem : BaseModel, IValidatableObject, ISoftDelete
     {
         [Required]
         public Basket Basket { get; set; }
@@ -30,5 +30,7 @@ namespace WebBanHang.Models
                     new[] { nameof(Quantity), nameof(BasketItem) });
             }
         }
+        [Required]
+        public bool IsDeleted { get; set; } = false;
     }
 }

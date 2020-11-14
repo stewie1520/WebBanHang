@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Reflection;
 using WebBanHang.Extensions.DataContext;
 using WebBanHang.Models;
-using WebBanHang.Models.Products;
 
 namespace WebBanHang.Data
 {
@@ -26,6 +25,15 @@ namespace WebBanHang.Data
         {
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            // this is to apply soft delete filter
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+                {
+                    entityType.AddSoftDeleteQueryFilter();
+                }
+            }
         }
     }
 }
