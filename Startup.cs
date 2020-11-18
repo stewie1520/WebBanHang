@@ -26,6 +26,7 @@ using WebBanHang.Filters;
 using Amazon.S3;
 using WebBanHang.Services.FileUploader;
 using WebBanHang.Services.Categories;
+using WebBanHang.Services.Products;
 
 namespace WebBanHang
 {
@@ -49,6 +50,7 @@ namespace WebBanHang
             services.AddScoped<IAuthorizationService, AuthorizationService>();
             services.AddScoped<IFileUploaderService, FileUploaderService>();
             services.AddScoped<ICategoriesService, CategoriesService>();
+            services.AddScoped<IProductService, ProductService>();
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(opt =>
                 {
