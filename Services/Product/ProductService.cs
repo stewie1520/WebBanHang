@@ -18,7 +18,7 @@ namespace WebBanHang.Services.Products
         private readonly ILogger<ProductService> _logger;
         private readonly IMapper _mapper;
 
-       public ProductService(DataContext context, ILogger<ProductService> logger, IMapper mapper)
+        public ProductService(DataContext context, ILogger<ProductService> logger, IMapper mapper)
         {
             _context = context;
             _logger = logger;
@@ -83,6 +83,41 @@ namespace WebBanHang.Services.Products
                 response.Code = ErrorCode.PRODUCT_UNEXPECTED_ERROR;
 
                 _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+        }
+
+        public async Task<ServiceResponse<GetProductDto>> GetOneProductAsync(int productId)
+        {
+            var response = new ServiceResponse<GetProductDto>();
+            try
+            {
+                var dbProduct = await _context.Products
+                    .Include(p => p.Images)
+                    .Include(p => p.Category)
+                    .FirstOrDefaultAsync(p => p.Id == productId);
+
+                if (dbProduct == null)
+                {
+                    response.Success = false;
+                    response.Message = "Product not found";
+                    response.Code = ErrorCode.PRODUCT_NOT_FOUND;
+
+                    return response;
+                }
+
+                response.Data = _mapper.Map<GetProductDto>(dbProduct);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.PRODUCT_UNEXPECTED_ERROR;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+
                 return response;
             }
         }

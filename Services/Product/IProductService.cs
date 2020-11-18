@@ -10,6 +10,6 @@ namespace WebBanHang.Services.Products
     public interface IProductService
     {
         Task<ServiceResponse<GetProductDto>> CreateProductAsync(CreateProductDto newProductDto);
-        
+        Task<ServiceResponse<GetProductDto>> GetOneProductAsync(int productId);
     }
 }

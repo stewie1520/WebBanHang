@@ -29,5 +29,18 @@ namespace WebBanHang.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet("{productId}")]
+        public async Task<IActionResult> GetOne(int productId)
+        {
+            var response = await _services.GetOneProductAsync(productId);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
     }
 }
