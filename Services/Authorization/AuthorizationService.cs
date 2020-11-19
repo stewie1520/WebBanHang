@@ -17,7 +17,7 @@ using WebBanHang.Extensions.DataContext;
 
 namespace WebBanHang.Services.Authorization
 {
-    public partial class AuthorizationService : IAuthorizationService
+    public partial class AuthorizationService : BaseService, IAuthorizationService
     {
         private DataContext _context;
         private IMapper _mapper;
