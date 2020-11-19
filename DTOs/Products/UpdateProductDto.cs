@@ -4,7 +4,7 @@ using WebBanHang.Models;
 
 namespace WebBanHang.DTOs.Products
 {
-    public class GetProductDto
+    public class UpdateProductDto
     {
         [Required]
         public int Id { get; set; }
@@ -18,8 +18,7 @@ namespace WebBanHang.DTOs.Products
         [Required]
         public int CategoryId { get; set; }
         public int? ParentId { get; set; }
-        public IEnumerable<int> ChildrenIds { get; set; }
-        public IEnumerable<string> ImageUrls { get; set; }
-        public ProductStatus Status { get; set; }
+        public List<string> ImageUrls { get; set; }
+        public ProductStatus Status { get; set; } = ProductStatus.Private;
     }
 }

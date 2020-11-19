@@ -9,6 +9,7 @@ using WebBanHang.DTOs.Products;
 using WebBanHang.Models;
 using WebBanHang.Data;
 using WebBanHang.Extensions.DataContext;
+using WebBanHang.Services.Exceptions;
 
 namespace WebBanHang.Services.Products
 {
@@ -118,6 +119,82 @@ namespace WebBanHang.Services.Products
 
                 _logger.LogError(ex.Message, ex.StackTrace);
 
+                return response;
+            }
+        }
+
+        public async Task<ServiceResponse<GetProductDto>> UpdateProductAsync(UpdateProductDto updateProductDto)
+        {
+            var response = new ServiceResponse<GetProductDto>();
+
+            try
+            {
+                var dbProduct = await _context.Products.Include(p => p.Category)
+                                    .Include(p => p.Images)
+                                    .FirstOrDefaultAsync(p => p.Id == updateProductDto.Id);
+
+                if (dbProduct == null)
+                {
+                    throw new ProductNotFoundException();
+                }
+
+                // Processing for category updating
+                if (dbProduct.Category.Id != updateProductDto.CategoryId)
+                {
+                    var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == updateProductDto.CategoryId);
+
+                    if (category == null)
+                    {
+                        throw new CategoryNotFoundException();
+                    }
+
+                    dbProduct.Category = category;
+                }
+
+                // Processing for images updating
+                if (!dbProduct.Images.Select(image => image.Url).SequenceEqual(updateProductDto.ImageUrls))
+                {
+                    // Remove existed images
+                    _context.ProductImages.RemoveRange(dbProduct.Images);
+                    var newProductImages = updateProductDto.ImageUrls.Select(url => new ProductImage()
+                    {
+                        Product = dbProduct,
+                        Url = url,
+                        ProductId = dbProduct.Id,
+                    }).ToList();
+                    dbProduct.Images = newProductImages;
+                }
+
+                try
+                {
+                    _context.Products.Update(dbProduct);
+                    await _context.SaveChangeWithValidationAsync();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    throw new ProductNotFoundException();
+                }
+
+                response.Data = _mapper.Map<GetProductDto>(dbProduct);
+                return response;
+            }
+            catch (BaseServiceException ex)
+            {
+                response.Success = false;
+                response.Message = ex.ErrorMessage;
+                response.Code = ex.Code;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"{ex.GetType()}");
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.PRODUCT_UNEXPECTED_ERROR;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
                 return response;
             }
         }

@@ -12,6 +12,7 @@ namespace WebBanHang.Profiles
         public ProductProfile()
         {
             CreateMap<CreateProductDto, Product>();
+            CreateMap<UpdateProductDto, Product>();
             CreateMap<Product, GetProductDto>()
                 .ForMember(dto => dto.ParentId, opts => opts.ConvertUsing(new ParentIdFormatter(), src => src.Parent))
                 .ForMember(dto => dto.ImageUrls, opts => opts.ConvertUsing(new ProductImageFormatter(), src => src.Images))
