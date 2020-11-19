@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebBanHang.Models
 {
-    public class User : BaseModel, ISoftDelete
+    public class User : BaseModel, ISoftDelete, IIdentity
     {
         [Required]
         public string Name { get; set; }

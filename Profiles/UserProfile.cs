@@ -9,10 +9,7 @@ namespace WebBanHang.Profiles
     {
         public UserProfile()
         {
-            CreateMap<User, UserRegisterDto>()
-                .ForMember(x => x.Password, opt => opt.Ignore());
-            CreateMap<UserRegisterDto, User>()
-                .ForMember(x => x.Password, opt => opt.Ignore());
+            
         }
     }
 }

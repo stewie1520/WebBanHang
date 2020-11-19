@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebBanHang.DTOs.User;
 using WebBanHang.Services.Authorization;
 using WebBanHang.Filters;
+using WebBanHang.Models;
 
 namespace WebBanHang.Controllers
 {
@@ -13,27 +14,17 @@ namespace WebBanHang.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private IAuthorizationService _auth;
-        public UserController(IAuthorizationService auth)
+        private IAuthorizationService<User> _userAuth;
+        public UserController(IAuthorizationService<User> userAuth)
         {
-            _auth = auth;
+            _userAuth = userAuth;
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(UserLoginDto userLogin)
+        public async Task<ActionResult> UserLogin(UserLoginDto userLogin)
         {
-            var response = await _auth.Login(userLogin);
+            var response = await _userAuth.Login(userLogin);
 
-            if (!response.Success)
-                return BadRequest(response);
-
-            return Ok(response);
-        }
-
-        [HttpPost("register")]
-        public async Task<ActionResult> Register(UserRegisterDto userRegister)
-        {
-            var response = await _auth.Register(userRegister);
             if (!response.Success)
                 return BadRequest(response);
 

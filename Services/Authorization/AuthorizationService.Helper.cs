@@ -10,7 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace WebBanHang.Services.Authorization
 {
-    public partial class AuthorizationService
+    public partial class AuthorizationService<T>
     {
         #region CreateHashedPassword
         /// <summary>
@@ -60,12 +60,13 @@ namespace WebBanHang.Services.Authorization
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        private string CreateToken(User user)
+        private string CreateToken(T user)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, $"{user.Id}"),
+                new Claim(ClaimTypes.NameIdentifier, $"{user.Email}"),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, typeof(T).Name),
             };
 
             var key = new SymmetricSecurityKey(
