@@ -27,6 +27,7 @@ using Amazon.S3;
 using WebBanHang.Services.FileUploader;
 using WebBanHang.Services.Categories;
 using WebBanHang.Services.Products;
+using Microsoft.AspNetCore.Http;
 
 namespace WebBanHang
 {
@@ -47,6 +48,7 @@ namespace WebBanHang
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAuthorizationService, AuthorizationService>();
             services.AddScoped<IFileUploaderService, FileUploaderService>();
             services.AddScoped<ICategoriesService, CategoriesService>();

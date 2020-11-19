@@ -11,6 +11,7 @@ namespace WebBanHang.Services.Products
     {
         Task<ServiceResponse<GetProductDto>> CreateProductAsync(CreateProductDto newProductDto);
         Task<ServiceResponse<GetProductDto>> GetOneProductAsync(int productId);
+        Task<ServiceResponse<List<GetProductDto>>> GetAllProductsAsync(string name, int page, int perpage);
         Task<ServiceResponse<GetProductDto>> UpdateProductAsync(UpdateProductDto updateProductDto);
     }
 }

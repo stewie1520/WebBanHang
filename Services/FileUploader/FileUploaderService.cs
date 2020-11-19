@@ -10,7 +10,7 @@ using WebBanHang.Commons;
 
 namespace WebBanHang.Services.FileUploader
 {
-    public class FileUploaderService : IFileUploaderService
+    public class FileUploaderService : BaseService, IFileUploaderService
     {
         private readonly IConfiguration _config;
         private readonly ILogger<FileUploaderService> _logger;

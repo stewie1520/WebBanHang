@@ -12,7 +12,7 @@ using WebBanHang.Extensions.DataContext;
 
 namespace WebBanHang.Services.Categories
 {
-    public class CategoriesService : ICategoriesService
+    public class CategoriesService : BaseService, ICategoriesService
     {
         private readonly DataContext _context;
         private readonly ILogger<CategoriesService> _logger;
