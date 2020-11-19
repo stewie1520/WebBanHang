@@ -10,20 +10,23 @@ using WebBanHang.Models;
 using WebBanHang.Data;
 using WebBanHang.Extensions.DataContext;
 using WebBanHang.Services.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace WebBanHang.Services.Products
 {
-    public class ProductService : IProductService
+    public class ProductService : BaseService, IProductService
     {
         private readonly DataContext _context;
         private readonly ILogger<ProductService> _logger;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ProductService(DataContext context, ILogger<ProductService> logger, IMapper mapper)
+        public ProductService(DataContext context, ILogger<ProductService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _logger = logger;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ServiceResponse<GetProductDto>> CreateProductAsync(CreateProductDto newProductDto)
@@ -86,6 +89,60 @@ namespace WebBanHang.Services.Products
                 _logger.LogError(ex.Message, ex.StackTrace);
                 return response;
             }
+        }
+
+        public async Task<ServiceResponse<List<GetProductDto>>> GetAllProductsAsync(string name, int page, int perpage)
+        {
+            
+            var response = new ServiceResponse<List<GetProductDto>>();
+            try
+            {
+                var productSkip = (page-1) * perpage;
+                int TotalPage;
+                List<Product> dbProducts = null;
+                if (name != null) 
+                {
+                    dbProducts = await _context.Products
+                        .Include(p => p.Images)
+                        .Include(p => p.Category)
+                        .Where(p => EF.Functions.Contains(p.Name, name))
+                        .Skip(productSkip)
+                        .Take(perpage)
+                        .ToListAsync(); 
+                    TotalPage = await _context.Products
+                        .Where(p => EF.Functions.Contains(p.Name, name))
+                        .CountAsync();
+                }
+                else
+                {
+                    dbProducts = await _context.Products
+                        .Include(p => p.Images)
+                        .Include(p => p.Category)
+                        .Skip(productSkip)
+                        .Take(perpage)
+                        .ToListAsync();
+                    TotalPage = await _context.Products
+                    .CountAsync();
+                }
+                var Pagination = new Pagination{
+                    CurrentPage = page,
+                    TotalPage = (int) Math.Ceiling(1.0m * TotalPage / perpage)
+                };
+
+                response.Data = dbProducts.Select(p => _mapper.Map<GetProductDto>(p)).ToList();
+                response.Pagination = Pagination;
+            }
+            catch(Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.PRODUCT_UNEXPECTED_ERROR;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+
+                return response;
+            }
+            return response;
         }
 
         public async Task<ServiceResponse<GetProductDto>> GetOneProductAsync(int productId)

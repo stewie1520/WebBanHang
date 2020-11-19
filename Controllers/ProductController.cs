@@ -4,7 +4,7 @@ using WebBanHang.Services.Products;
 using WebBanHang.DTOs.Products;
 using WebBanHang.Models;
 using Swashbuckle.AspNetCore.Annotations;
-
+using WebBanHang.Services;
 
 namespace WebBanHang.Controllers
 {
@@ -36,6 +36,18 @@ namespace WebBanHang.Controllers
         public async Task<IActionResult> GetOne(int productId)
         {
             var response = await _services.GetOneProductAsync(productId);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery(Name = "name")] string name, [FromQuery(Name = "page")] int page = 1, [FromQuery(Name = "perpage")] int perpage = BaseService.DefaultPerPage)
+        {
+            var response = await _services.GetAllProductsAsync(name, page, perpage);
 
             if (!response.Success)
             {
