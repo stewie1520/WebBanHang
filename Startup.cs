@@ -28,6 +28,7 @@ using WebBanHang.Services.FileUploader;
 using WebBanHang.Services.Categories;
 using WebBanHang.Services.Products;
 using Microsoft.AspNetCore.Http;
+using WebBanHang.Models;
 
 namespace WebBanHang
 {
@@ -49,7 +50,8 @@ namespace WebBanHang
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IAuthorizationService, AuthorizationService>();
+            services.AddScoped<IAuthorizationService<User>, AuthorizationService<User>>();
+            services.AddScoped<IAuthorizationService<Customer>, AuthorizationService<Customer>>();
             services.AddScoped<IFileUploaderService, FileUploaderService>();
             services.AddScoped<ICategoriesService, CategoriesService>();
             services.AddScoped<IProductService, ProductService>();

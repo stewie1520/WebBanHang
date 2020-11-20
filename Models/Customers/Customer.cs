@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebBanHang.Models
 {
-    public class Customer : BaseModel, IValidatableObject, ISoftDelete
+    public class Customer : BaseModel, IValidatableObject, ISoftDelete, IIdentity
     {
         [Required]
-        public int FullName { get; set; }
+        public string FullName { get; set; }
         [EmailAddress]
         public string Email { get; set; }
         public bool IsRegisted { get; set; } = false;

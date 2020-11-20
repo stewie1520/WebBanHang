@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WebBanHang.Data;
 using WebBanHang.Models;
 using WebBanHang.DTOs.User;
+using WebBanHang.DTOs.Customers;
 using AutoMapper;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
@@ -17,15 +18,15 @@ using WebBanHang.Extensions.DataContext;
 
 namespace WebBanHang.Services.Authorization
 {
-    public partial class AuthorizationService : BaseService, IAuthorizationService
+    public partial class AuthorizationService<T> : BaseService, IAuthorizationService<T> where T : class, IIdentity
     {
         private DataContext _context;
         private IMapper _mapper;
         private readonly IConfiguration _config;
-        private readonly ILogger<AuthorizationService> _logger;
+        private readonly ILogger<AuthorizationService<T>> _logger;
 
         #region Constructor
-        public AuthorizationService(DataContext context, IMapper mapper, IConfiguration config, ILogger<AuthorizationService> logger)
+        public AuthorizationService(DataContext context, IMapper mapper, IConfiguration config, ILogger<AuthorizationService<T>> logger)
         {
             _context = context;
             _mapper = mapper;
@@ -46,7 +47,7 @@ namespace WebBanHang.Services.Authorization
 
             try
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == userLogin.Email);
+                var user = await _context.Set<T>().FirstOrDefaultAsync(u => u.Email.ToLower() == userLogin.Email);
 
                 if (user == null)
                 {
@@ -88,17 +89,17 @@ namespace WebBanHang.Services.Authorization
         /// <summary>
         /// Register - Create new user
         /// </summary>
-        /// <param name="userRegister"></param>
+        /// <param name="customerRegister"></param>
         /// <returns></returns>
-        public async Task<ServiceResponse<int>> Register(UserRegisterDto userRegister)
+        public async Task<ServiceResponse<int>> Register(CustomerRegisterDto customerRegister)
         {
             var response = new ServiceResponse<int>();
 
             try
             {
-                var user = _mapper.Map<User>(userRegister);
+                var customer = _mapper.Map<Customer>(customerRegister);
 
-                bool HasUserExisted = await UserExists(user.Email);
+                bool HasUserExisted = await UserExists(customer.Email);
 
                 if (HasUserExisted)
                 {
@@ -109,11 +110,11 @@ namespace WebBanHang.Services.Authorization
                     return response;
                 }
 
-                (user.Password, user.PasswordSalt) = CreateHashedPassword(userRegister.Password);
-                await _context.Users.AddAsync(user);
-                await _context.SaveChangeWithValidationAsync();
+                (customer.Password, customer.PasswordSalt) = CreateHashedPassword(customerRegister.Password);
+                await _context.Customers.AddAsync(customer);
+                await _context.SaveChangesAsync();
 
-                response.Data = user.Id;
+                response.Data = customer.Id;
 
                 return response;
             }
@@ -139,7 +140,7 @@ namespace WebBanHang.Services.Authorization
         {
             try
             {
-                return await _context.Users.AnyAsync(user => user.Email.ToLower() == email);
+                return await _context.Customers.AnyAsync(user => user.Email.ToLower() == email);
             }
             catch (Exception ex)
             {

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebBanHang.DTOs.User;
+using WebBanHang.DTOs.Customers;
 using WebBanHang.Models;
 
 namespace WebBanHang.Services.Authorization
 {
-    public interface IAuthorizationService
+    public interface IAuthorizationService<T>
     {
-        Task<ServiceResponse<int>> Register(UserRegisterDto userRegister);
+        Task<ServiceResponse<int>> Register(CustomerRegisterDto customerRegister);
         Task<ServiceResponse<string>> Login(UserLoginDto userLogin);
         Task<bool> UserExists(string email);
     }
