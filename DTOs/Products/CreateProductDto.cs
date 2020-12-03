@@ -19,5 +19,6 @@ namespace WebBanHang.DTOs.Products
         public List<string> ImageUrls { get; set; }
         public ProductStatus Status { get; set; } = ProductStatus.Private;
         public int Quantity { get; set; } = 0;
+        public int Cost { get; set; } = 0;
     }
 }

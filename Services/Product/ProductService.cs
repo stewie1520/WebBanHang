@@ -67,11 +67,19 @@ namespace WebBanHang.Services.Products
 
                 product.Category = category;
 
-
                 var productImages = newProductDto.ImageUrls.Select(url => new ProductImage { Url = url, Product = product }).ToList();
                 product.Images = productImages;
 
                 _context.Products.Add(product);
+
+                var newWarehouseItem = new WarehouseItem
+                {
+                    Product = product,
+                    AverageCost = newProductDto.Cost,
+                    Quantity = newProductDto.Quantity,
+                };
+
+                _context.WarehouseItems.Add(newWarehouseItem);
 
                 await _context.SaveChangeWithValidationAsync();
 
