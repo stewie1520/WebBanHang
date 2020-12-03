@@ -18,5 +18,6 @@ namespace WebBanHang.DTOs.Products
         public int? ParentId { get; set; }
         public List<string> ImageUrls { get; set; }
         public ProductStatus Status { get; set; } = ProductStatus.Private;
+        public int Quantity { get; set; } = 0;
     }
 }
