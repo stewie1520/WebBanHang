@@ -10,5 +10,6 @@ namespace WebBanHang.Services.WarehouseTransaction
     public interface IWarehouseTransactionService
     {
         Task<ServiceResponse<GetWarehouseTransactionDto>> CreateWarehouseTransactionAsync(CreateWarehouseTransactionDto dto);
+        Task<ServiceResponse<GetWarehouseTransactionDto>> GetWarehouseTransactionAsync(int warehouseTransactionId);
     }
 }

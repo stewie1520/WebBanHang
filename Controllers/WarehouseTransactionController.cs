@@ -33,5 +33,18 @@ namespace WebBanHang.Controllers
 
             return BadRequest(res);
         }
+
+        [HttpGet("{warehouseTransactionId}")]
+        public async Task<IActionResult> GetWarehouseTransaction(int warehouseTransactionId)
+        {
+            var res = await _service.GetWarehouseTransactionAsync(warehouseTransactionId);
+
+            if (res.Success)
+            {
+                return Ok(res);
+            }
+
+            return BadRequest(res);
+        }
     }
 }

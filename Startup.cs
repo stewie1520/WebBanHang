@@ -31,6 +31,7 @@ using WebBanHang.Services.Categories;
 using WebBanHang.Services.Products;
 using WebBanHang.Models;
 using WebBanHang.Services.WarehouseTransaction;
+using WebBanHang.Services.WarehouseTransactionItem;
 
 namespace WebBanHang
 {
@@ -60,6 +61,7 @@ namespace WebBanHang
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IWarehouseTransactionService, WarehouseTransactionService>();
+            services.AddScoped<IWarehouseTransactionItemService, WarehouseTransactionItemService>();
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(opt =>

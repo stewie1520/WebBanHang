@@ -81,5 +81,44 @@ namespace WebBanHang.Services.WarehouseTransaction
                 return response;
             }
         }
+
+        public async Task<ServiceResponse<GetWarehouseTransactionDto>> GetWarehouseTransactionAsync(int warehouseTransactionId)
+        {
+            var response = new ServiceResponse<GetWarehouseTransactionDto>();
+
+            try
+            {
+                var dbWarehouseTransaction = await _context.WarehouseTransactions
+                    .Include(x => x.CreatedBy)
+                    .FirstOrDefaultAsync(x => x.Id == warehouseTransactionId);
+
+                if (dbWarehouseTransaction == null)
+                {
+                    throw new WarehouseTransactionNotFoundException();
+                }
+
+                response.Data = _mapper.Map<GetWarehouseTransactionDto>(dbWarehouseTransaction);
+
+                return response;
+            }
+            catch (BaseServiceException ex)
+            {
+                response.Success = false;
+                response.Message = ex.ErrorMessage;
+                response.Code = ex.Code;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.WAREHOUSE_TRANSACTION_UNEXPECTED_ERROR;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+        }
     }
 }

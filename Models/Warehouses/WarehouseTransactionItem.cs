@@ -6,6 +6,10 @@ namespace WebBanHang.Models
     public class WarehouseTransactionItem : BaseModel, ISoftDelete, IValidatableObject
     {
         [Required]
+        public WarehouseTransaction WarehouseTransaction { get; set; }
+
+        [Required]
+        public int ProductId { get; set; }
         public Product Product { get; set; }
         [Required]
         public int Quantity { get; set; }
