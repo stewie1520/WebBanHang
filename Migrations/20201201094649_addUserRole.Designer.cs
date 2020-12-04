@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanHang.Data;
 
 namespace WebBanHang.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20201201094649_addUserRole")]
+    partial class addUserRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -320,7 +322,7 @@ namespace WebBanHang.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Role");
                 });
 
             modelBuilder.Entity("WebBanHang.Models.User", b =>
@@ -390,9 +392,10 @@ namespace WebBanHang.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRole");
                 });
 
             modelBuilder.Entity("WebBanHang.Models.Address", b =>
@@ -466,8 +469,8 @@ namespace WebBanHang.Migrations
                         .IsRequired();
 
                     b.HasOne("WebBanHang.Models.User", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
+                        .WithOne("UserRoles")
+                        .HasForeignKey("WebBanHang.Models.UserRole", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

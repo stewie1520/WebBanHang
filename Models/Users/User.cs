@@ -16,6 +16,7 @@ namespace WebBanHang.Models
         [Column(TypeName = "date")]
         public DateTime BirthDate { get; set; }
         public Gender Gender { get; set; } = Gender.Unknown;
+        public IEnumerable<UserRole> UserRoles { get; set; }
         [Required]
         public bool IsDeleted { get; set; } = false;
     }
