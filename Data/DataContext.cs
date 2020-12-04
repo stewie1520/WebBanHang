@@ -24,6 +24,7 @@ namespace WebBanHang.Data
         public DbSet<UserRole> UserRoles { get; set; }
 
         public DbSet<WarehouseItem> WarehouseItems { get; set; }
+        public DbSet<WarehouseTransaction> WarehouseTransactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

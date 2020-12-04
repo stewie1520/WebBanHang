@@ -7,7 +7,7 @@ namespace WebBanHang.Models
     public class WarehouseTransaction : BaseModel, ISoftDelete
     {
         [Required]
-        public WarehouseTransactionType Type { get; set; }
+        public WarehouseTransactionType TransactionType { get; set; }
         public User CreatedBy { get; set; }
         public WarehouseTransactionStatus Status { get; set; } = WarehouseTransactionStatus.Processing;
         public IEnumerable<WarehouseTransactionItem> Items { get; set; }

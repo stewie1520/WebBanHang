@@ -24,5 +24,6 @@ namespace WebBanHang.Models
         PRODUCT_NOT_FOUND,
         WAREHOUSE_TRANSACTION_UNEXPECTED_ERROR = 600,
         WAREHOUSE_TRANSACTION_NOT_FOUND,
+        USER_NOT_FOUND = 700,
     }
 }

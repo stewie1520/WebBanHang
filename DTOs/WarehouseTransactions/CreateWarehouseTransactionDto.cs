@@ -8,7 +8,7 @@
     public class CreateWarehouseTransactionDto
     {
         [Required]
-        public WarehouseTransactionType Type { get; set; }
+        public WarehouseTransactionType TransactionType { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

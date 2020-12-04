@@ -18,6 +18,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 
 using WebBanHang.Data;
 using WebBanHang.Extensions.SwashBuckle;
@@ -28,8 +29,8 @@ using Amazon.S3;
 using WebBanHang.Services.FileUploader;
 using WebBanHang.Services.Categories;
 using WebBanHang.Services.Products;
-using Microsoft.AspNetCore.Http;
 using WebBanHang.Models;
+using WebBanHang.Services.WarehouseTransaction;
 
 namespace WebBanHang
 {
@@ -58,6 +59,8 @@ namespace WebBanHang
             services.AddScoped<ICategoriesService, CategoriesService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IWarehouseTransactionService, WarehouseTransactionService>();
+
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(opt =>
                 {
