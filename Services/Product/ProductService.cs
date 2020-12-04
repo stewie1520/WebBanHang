@@ -254,7 +254,6 @@ namespace WebBanHang.Services.Products
             }
             catch (Exception ex)
             {
-                _logger.LogWarning($"{ex.GetType()}");
                 response.Success = false;
                 response.Message = ex.Message;
                 response.Code = ErrorCode.PRODUCT_UNEXPECTED_ERROR;

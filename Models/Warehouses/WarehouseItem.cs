@@ -15,7 +15,7 @@ namespace WebBanHang.Models
         // public WarehouseImport LastImport { get; set; }
         // public WarehouseExport LastExport { get; set; }
         // public WarehouseAdjustment LastAdjustment { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
