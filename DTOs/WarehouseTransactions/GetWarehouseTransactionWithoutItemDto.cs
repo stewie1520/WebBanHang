@@ -5,7 +5,7 @@ using WebBanHang.Models;
 
 namespace WebBanHang.DTOs.WarehouseTransactions
 {
-    public class GetAllWarehouseTransactionsDto
+    public class GetWarehouseTransactionWithoutItemDto
     {
         public int Id { get; set; }
         [Required]
@@ -13,5 +13,6 @@ namespace WebBanHang.DTOs.WarehouseTransactions
         public DateTime CreatedAt { get; set; }
         public WarehouseTransactionStatus Status { get; set; }
         public int CreatedBy { get; set; }
+        public string Description { get; set; }
     }
 }

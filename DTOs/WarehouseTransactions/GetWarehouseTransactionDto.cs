@@ -16,6 +16,7 @@ namespace WebBanHang.DTOs.WarehouseTransactions
         public WarehouseTransactionStatus Status { get; set; }
         public int CreatedBy { get; set; }
 
+        public string Description { get; set; }
         public IEnumerable<TransactionItem> Items { get; set; }
 
         public class TransactionItem

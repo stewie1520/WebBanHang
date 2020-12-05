@@ -10,5 +10,7 @@
         [Required]
         public WarehouseTransactionType TransactionType { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public string Description { get; set; }
     }
 }

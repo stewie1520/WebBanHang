@@ -13,6 +13,8 @@ namespace WebBanHang.Services.WarehouseTransaction
         Task<ServiceResponse<GetWarehouseTransactionDto>> CreateWarehouseTransactionAsync(CreateWarehouseTransactionDto dto);
         Task<ServiceResponse<GetWarehouseTransactionDto>> GetWarehouseTransactionAsync(int warehouseTransactionId);
 
-        Task<ServiceResponse<IEnumerable<GetAllWarehouseTransactionsDto>>> GetAllWarehouseTransactionsAsync(PaginationParam pagination, int type = 0);
+        Task<ServiceResponse<IEnumerable<GetWarehouseTransactionWithoutItemDto>>> GetAllWarehouseTransactionsAsync(PaginationParam pagination, int type = 0);
+
+        Task<ServiceResponse<GetWarehouseTransactionWithoutItemDto>> DeleteWarehouseTransactionAsync(int warehouseTransactionId);
     }
 }

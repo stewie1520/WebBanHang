@@ -62,5 +62,19 @@ namespace WebBanHang.Controllers
 
             return BadRequest(res);
         }
+
+        [HttpDelete("{warehouseTransactionId}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteWarehouseTransaction(int warehouseTransactionId)
+        {
+            var res = await _service.DeleteWarehouseTransactionAsync(warehouseTransactionId);
+
+            if (res.Success)
+            {
+                return Ok(res);
+            }
+
+            return BadRequest(res);
+        }
     }
 }

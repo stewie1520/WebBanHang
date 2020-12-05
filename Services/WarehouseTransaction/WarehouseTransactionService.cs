@@ -54,6 +54,7 @@ namespace WebBanHang.Services.WarehouseTransaction
                     CreatedAt = dto.CreatedAt,
                     Status = WarehouseTransactionStatus.Processing, // new warehouse transaction has processing status as default
                     CreatedBy = user,
+                    Description = dto.Description,
                 };
 
                 await _context.WarehouseTransactions.AddAsync(newTransaction);
@@ -83,9 +84,57 @@ namespace WebBanHang.Services.WarehouseTransaction
             }
         }
 
-        public async Task<ServiceResponse<IEnumerable<GetAllWarehouseTransactionsDto>>> GetAllWarehouseTransactionsAsync(PaginationParam pagination, int type = 0)
+        public async Task<ServiceResponse<GetWarehouseTransactionWithoutItemDto>> DeleteWarehouseTransactionAsync(int warehouseTransactionId)
         {
-            var response = new ServiceResponse<IEnumerable<GetAllWarehouseTransactionsDto>>();
+            var response = new ServiceResponse<GetWarehouseTransactionWithoutItemDto>();
+
+            try
+            {
+                var dbWarehouseTransaction = await _context.WarehouseTransactions.FirstOrDefaultAsync(x => x.Id == warehouseTransactionId);
+
+                if (dbWarehouseTransaction == null)
+                {
+                    throw new WarehouseTransactionNotFoundException();
+                }
+
+                if (dbWarehouseTransaction.Status != WarehouseTransactionStatus.Processing)
+                {
+                    throw new WarehouseTransactionModifiedException();
+                }
+
+
+                dbWarehouseTransaction.IsDeleted = true;
+                _context.WarehouseTransactions.Update(dbWarehouseTransaction);
+
+                await _context.SaveChangeWithValidationAsync();
+
+                response.Data = _mapper.Map<GetWarehouseTransactionWithoutItemDto>(dbWarehouseTransaction);
+
+                return response;
+            }
+            catch (BaseServiceException ex)
+            {
+                response.Success = false;
+                response.Message = ex.ErrorMessage;
+                response.Code = ex.Code;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.WAREHOUSE_TRANSACTION_UNEXPECTED_ERROR;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+        }
+
+        public async Task<ServiceResponse<IEnumerable<GetWarehouseTransactionWithoutItemDto>>> GetAllWarehouseTransactionsAsync(PaginationParam pagination, int type = 0)
+        {
+            var response = new ServiceResponse<IEnumerable<GetWarehouseTransactionWithoutItemDto>>();
 
             try
             {
@@ -98,7 +147,7 @@ namespace WebBanHang.Services.WarehouseTransaction
                     .ToListAsync();
 
                 response.Data = dbWarehouseTransactions
-                    .Select(dbWarehouseTransaction => _mapper.Map<GetAllWarehouseTransactionsDto>(dbWarehouseTransaction))
+                    .Select(dbWarehouseTransaction => _mapper.Map<GetWarehouseTransactionWithoutItemDto>(dbWarehouseTransaction))
                     .ToList();
 
                 return response;

@@ -11,7 +11,7 @@ namespace WebBanHang.DTOs.Commons
 
         public OrderByType OrderBy { get; set; } = OrderByType.ASC;
         
-        private enum OrderByType
+        public enum OrderByType
         {
             ASC,
             DESC,

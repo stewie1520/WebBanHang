@@ -48,7 +48,7 @@ namespace WebBanHang.Profiles
                 .ForMember(dest => dest.CreatedBy, option => option.ConvertUsing(new CreatedByFormatter(), src => src.CreatedBy))
                 .ForMember(dest => dest.Items, option => option.ConvertUsing(new ItemsFormatter(), src => src.Items));
 
-            CreateMap<WarehouseTransaction, GetAllWarehouseTransactionsDto>();
+            CreateMap<WarehouseTransaction, GetWarehouseTransactionWithoutItemDto>();
         }
     }
 }
