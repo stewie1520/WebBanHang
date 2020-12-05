@@ -89,6 +89,9 @@ namespace WebBanHang.Services.WarehouseTransaction
             try
             {
                 var dbWarehouseTransaction = await _context.WarehouseTransactions
+                    .Include(x => x.Items)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Images)
                     .Include(x => x.CreatedBy)
                     .FirstOrDefaultAsync(x => x.Id == warehouseTransactionId);
 
