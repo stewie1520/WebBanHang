@@ -37,7 +37,6 @@ namespace WebBanHang.Profiles
                                   Quantity = item.Quantity
                               }).ToList();
 
-
                 return result;
             }
         }
@@ -48,6 +47,8 @@ namespace WebBanHang.Profiles
             CreateMap<WarehouseTransaction, GetWarehouseTransactionDto>()
                 .ForMember(dest => dest.CreatedBy, option => option.ConvertUsing(new CreatedByFormatter(), src => src.CreatedBy))
                 .ForMember(dest => dest.Items, option => option.ConvertUsing(new ItemsFormatter(), src => src.Items));
+
+            CreateMap<WarehouseTransaction, GetAllWarehouseTransactionsDto>();
         }
     }
 }

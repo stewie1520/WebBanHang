@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 using WebBanHang.Services.WarehouseTransaction;
 using WebBanHang.DTOs.WarehouseTransactions;
+using WebBanHang.DTOs.Commons;
 
 namespace WebBanHang.Controllers
 {
@@ -34,7 +35,22 @@ namespace WebBanHang.Controllers
             return BadRequest(res);
         }
 
+        [HttpGet("")]
+        [Authorize]
+        public async Task<IActionResult> GetAllWarehouseTransaction([FromQuery] PaginationParam pagination, [FromQuery] int type = 0)
+        {
+            var res = await _service.GetAllWarehouseTransactionsAsync(pagination, type);
+
+            if (res.Success)
+            {
+                return Ok(res);
+            }
+
+            return BadRequest(res);
+        }
+
         [HttpGet("{warehouseTransactionId}")]
+        [Authorize]
         public async Task<IActionResult> GetWarehouseTransaction(int warehouseTransactionId)
         {
             var res = await _service.GetWarehouseTransactionAsync(warehouseTransactionId);

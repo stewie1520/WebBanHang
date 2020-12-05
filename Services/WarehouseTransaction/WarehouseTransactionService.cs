@@ -15,6 +15,7 @@ using WebBanHang.Data;
 
 namespace WebBanHang.Services.WarehouseTransaction
 {
+    using WebBanHang.DTOs.Commons;
     using WebBanHang.Models;
 
     public class WarehouseTransactionService : IWarehouseTransactionService
@@ -76,6 +77,46 @@ namespace WebBanHang.Services.WarehouseTransaction
                 response.Success = false;
                 response.Message = ex.Message;
                 response.Code = ErrorCode.WAREHOUSE_TRANSACTION_UNEXPECTED_ERROR;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+        }
+
+        public async Task<ServiceResponse<IEnumerable<GetAllWarehouseTransactionsDto>>> GetAllWarehouseTransactionsAsync(PaginationParam pagination, int type = 0)
+        {
+            var response = new ServiceResponse<IEnumerable<GetAllWarehouseTransactionsDto>>();
+
+            try
+            {
+                var warehouseTransactionType = (WarehouseTransactionType)type;
+
+                var dbWarehouseTransactions = await _context.WarehouseTransactions
+                    .Where(x => x.TransactionType == warehouseTransactionType)
+                    .Skip((pagination.Page - 1) * pagination.PerPage)
+                    .Take(pagination.PerPage)
+                    .ToListAsync();
+
+                response.Data = dbWarehouseTransactions
+                    .Select(dbWarehouseTransaction => _mapper.Map<GetAllWarehouseTransactionsDto>(dbWarehouseTransaction))
+                    .ToList();
+
+                return response;
+            }
+            catch (BaseServiceException ex)
+            {
+                response.Success = false;
+                response.Message = ex.ErrorMessage;
+                response.Code = ex.Code;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.WAREHOUSE_TRANSACTION_ITEM_UNEXPECTED_ERROR;
 
                 _logger.LogError(ex.Message, ex.StackTrace);
                 return response;

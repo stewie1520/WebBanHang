@@ -9,6 +9,7 @@ namespace WebBanHang.DTOs.WarehouseTransactions
 
     public class GetWarehouseTransactionDto
     {
+        public int Id { get; set; }
         [Required]
         public WarehouseTransactionType TransactionType { get; set; }
         public DateTime CreatedAt { get; set; }
