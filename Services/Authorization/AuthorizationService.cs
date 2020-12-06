@@ -3,10 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebBanHang.Data;
-using WebBanHang.Models;
-using WebBanHang.DTOs.User;
-using WebBanHang.DTOs.Customers;
 using AutoMapper;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +10,12 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+
 using WebBanHang.Extensions.DataContext;
+using WebBanHang.Data;
+using WebBanHang.Models;
+using WebBanHang.DTOs.User;
+using WebBanHang.DTOs.Customers;
 
 namespace WebBanHang.Services.Authorization
 {

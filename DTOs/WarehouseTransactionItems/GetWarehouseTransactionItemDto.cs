@@ -1,0 +1,13 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebBanHang.DTOs.WarehouseTransactionItems
+{
+    public class GetWarehouseTransactionItemDto
+    {
+        public int Id { get; set; }
+        [Required]
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
+    }
+}

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanHang.Data;
 
 namespace WebBanHang.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20201204075950_AddWarehouseTransaction")]
+    partial class AddWarehouseTransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -440,9 +442,6 @@ namespace WebBanHang.Migrations
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -484,7 +483,7 @@ namespace WebBanHang.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("WarehouseTransactionId")
+                    b.Property<int?>("WarehouseTransactionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -493,7 +492,7 @@ namespace WebBanHang.Migrations
 
                     b.HasIndex("WarehouseTransactionId");
 
-                    b.ToTable("WarehouseTransactionItems");
+                    b.ToTable("WarehouseTransactionItem");
                 });
 
             modelBuilder.Entity("WebBanHang.Models.Address", b =>
@@ -597,11 +596,9 @@ namespace WebBanHang.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebBanHang.Models.WarehouseTransaction", "WarehouseTransaction")
+                    b.HasOne("WebBanHang.Models.WarehouseTransaction", null)
                         .WithMany("Items")
-                        .HasForeignKey("WarehouseTransactionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WarehouseTransactionId");
                 });
 #pragma warning restore 612, 618
         }

@@ -24,6 +24,20 @@ namespace WebBanHang.Controllers
             _userAuth = userAuth;
         }
 
+        /// <summary>
+        /// Login with username and password
+        /// </summary>
+        /// <param name="userLogin"></param>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     POST /login
+        ///     {
+        ///         "username": "donghuuhieu1520@gmail.com",
+        ///         "password": "123456"
+        ///     }
+        /// </remarks>
+        /// <returns></returns>
         [HttpPost("login")]
         public async Task<ActionResult> UserLogin(UserLoginDto userLogin)
         {
