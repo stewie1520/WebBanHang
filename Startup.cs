@@ -62,6 +62,13 @@ namespace WebBanHang
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IWarehouseTransactionService, WarehouseTransactionService>();
             services.AddScoped<IWarehouseTransactionItemService, WarehouseTransactionItemService>();
+            
+            services.AddCors(options => options.AddPolicy("EasePolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
 
             services.AddControllers()
                 .ConfigureApiBehaviorOptions(opt =>
@@ -125,6 +132,7 @@ namespace WebBanHang
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors("EasePolicy");
 
             app.UseSwagger();
             app.UseSwaggerUI(setupAction => {
