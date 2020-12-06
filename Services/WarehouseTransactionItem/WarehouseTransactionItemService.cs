@@ -45,7 +45,7 @@ namespace WebBanHang.Services.WarehouseTransactionItem
                     throw new WarehouseTransactionNotFoundException();
                 }
 
-                if (dbWarehouseTransaction.Status != WarehouseTransactionStatus.Processing)
+                if (!dbWarehouseTransaction.CanModify())
                 {
                     throw new WarehouseTransactionModifiedException();
                 }
@@ -140,7 +140,7 @@ namespace WebBanHang.Services.WarehouseTransactionItem
                     throw new WarehouseTransactionItemNotFoundException();
                 }
 
-                if (dbTransactionItem.WarehouseTransaction?.Status != WarehouseTransactionStatus.Processing)
+                if (!dbTransactionItem.WarehouseTransaction?.CanModify() ?? true)
                 {
                     throw new WarehouseTransactionModifiedException();
                 }

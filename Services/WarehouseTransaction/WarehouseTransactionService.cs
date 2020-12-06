@@ -12,13 +12,14 @@ using WebBanHang.DTOs.WarehouseTransactions;
 using WebBanHang.Services.Exceptions;
 using WebBanHang.Extensions.DataContext;
 using WebBanHang.Data;
+using WebBanHang.Commons;
 
 namespace WebBanHang.Services.WarehouseTransaction
 {
     using WebBanHang.DTOs.Commons;
     using WebBanHang.Models;
 
-    public class WarehouseTransactionService : IWarehouseTransactionService
+    public partial class WarehouseTransactionService : IWarehouseTransactionService
     {
         private readonly ILogger<WarehouseTransactionService> _logger;
         private readonly IMapper _mapper;
@@ -97,7 +98,7 @@ namespace WebBanHang.Services.WarehouseTransaction
                     throw new WarehouseTransactionNotFoundException();
                 }
 
-                if (dbWarehouseTransaction.Status != WarehouseTransactionStatus.Processing)
+                if (!dbWarehouseTransaction.CanModify())
                 {
                     throw new WarehouseTransactionModifiedException();
                 }
@@ -146,9 +147,13 @@ namespace WebBanHang.Services.WarehouseTransaction
                     .Take(pagination.PerPage)
                     .ToListAsync();
 
+                var totalWarehouseTransactionQuantity = await _context.WarehouseTransactions.CountAsync();
+
                 response.Data = dbWarehouseTransactions
                     .Select(dbWarehouseTransaction => _mapper.Map<GetWarehouseTransactionWithoutItemDto>(dbWarehouseTransaction))
                     .ToList();
+
+                response.Pagination = PaginationHelper.CreatePagination(pagination, totalWarehouseTransactionQuantity);
 
                 return response;
             }
@@ -189,6 +194,79 @@ namespace WebBanHang.Services.WarehouseTransaction
                 {
                     throw new WarehouseTransactionNotFoundException();
                 }
+
+                response.Data = _mapper.Map<GetWarehouseTransactionDto>(dbWarehouseTransaction);
+
+                return response;
+            }
+            catch (BaseServiceException ex)
+            {
+                response.Success = false;
+                response.Message = ex.ErrorMessage;
+                response.Code = ex.Code;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.WAREHOUSE_TRANSACTION_UNEXPECTED_ERROR;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+        }
+
+        public async Task<ServiceResponse<GetWarehouseTransactionDto>> UpdateWarehouseTransactionStatusAsync(int warehouseTransactionId, WarehouseTransactionStatus newStatus)
+        {
+            var response = new ServiceResponse<GetWarehouseTransactionDto>();
+
+            try
+            {
+                var dbWarehouseTransaction = await _context.WarehouseTransactions
+                    .Include(x => x.Items)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Images)
+                    .Include(x => x.CreatedBy)
+                    .FirstOrDefaultAsync(x => x.Id == warehouseTransactionId);
+
+                if (dbWarehouseTransaction == null)
+                {
+                    throw new WarehouseTransactionNotFoundException();
+                }
+
+                if (!dbWarehouseTransaction.CanModify())
+                {
+                    throw new WarehouseTransactionModifiedException();
+                }
+
+                dbWarehouseTransaction.Status = newStatus;
+
+                if (newStatus == WarehouseTransactionStatus.Done)
+                {
+                    // Change the quantity of item
+                    var dbWarehouseTransactionItems = dbWarehouseTransaction.Items;
+                    var itemIds = dbWarehouseTransactionItems.Select(item => item.ProductId).ToList();
+
+                    var dbWarehouseItems = await _context.WarehouseItems
+                        .Where(x => itemIds.Contains(x.ProductId))
+                        .ToListAsync();
+
+                    foreach (var dbWarehouseItem in dbWarehouseItems)
+                    {
+                        var found = dbWarehouseTransactionItems.FirstOrDefault(tItem => tItem.ProductId == dbWarehouseItem.ProductId);
+                        dbWarehouseItem.Quantity += dbWarehouseTransaction.TransactionType == WarehouseTransactionType.Import
+                            ? found.Quantity
+                            : -found.Quantity;
+
+                        _context.WarehouseItems.Update(dbWarehouseItem);
+                    }
+                }
+
+                _context.WarehouseTransactions.Update(dbWarehouseTransaction);
+                await _context.SaveChangeWithValidationAsync();
 
                 response.Data = _mapper.Map<GetWarehouseTransactionDto>(dbWarehouseTransaction);
 

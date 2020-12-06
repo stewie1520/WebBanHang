@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebBanHang.Models
 {
-    public class WarehouseTransaction : BaseModel, ISoftDelete
+    public partial class WarehouseTransaction : BaseModel, ISoftDelete
     {
         [Required]
         public WarehouseTransactionType TransactionType { get; set; }
