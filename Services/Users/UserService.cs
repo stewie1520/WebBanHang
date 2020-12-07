@@ -14,8 +14,6 @@ namespace WebBanHang.Services.Users
 {
     public partial class UserService : BaseService, IUserService
     {
-        
-
         private readonly DataContext _context;
         private readonly ILogger<UserService> _logger;
         private readonly IMapper _mapper;
@@ -67,7 +65,8 @@ namespace WebBanHang.Services.Users
             return response;
         }
 
-        public async Task<ServiceResponse<List<GetUserDto>>> GetAllUsers(int page, int perpage) {
+        public async Task<ServiceResponse<List<GetUserDto>>> GetAllUsers(int page, int perpage)
+        {
             var response = new ServiceResponse<List<GetUserDto>>();
             try
             {
@@ -87,7 +86,7 @@ namespace WebBanHang.Services.Users
                 };
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
