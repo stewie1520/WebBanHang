@@ -59,8 +59,9 @@ namespace WebBanHang.Services.Authorization
         /// Generate a token from user info
         /// </summary>
         /// <param name="user"></param>
+        /// <param name="expirationInMinutes"></param>
         /// <returns></returns>
-        private string CreateToken(T user)
+        private string CreateToken(T user, double expirationInMinutes = 15)
         {
             var claims = new List<Claim>
             {
@@ -77,7 +78,7 @@ namespace WebBanHang.Services.Authorization
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(15),
+                Expires = DateTime.UtcNow.AddMinutes(expirationInMinutes),
                 SigningCredentials = signingCredential,
             };
 

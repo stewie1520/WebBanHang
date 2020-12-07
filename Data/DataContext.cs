@@ -26,11 +26,10 @@ namespace WebBanHang.Data
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
-
         public DbSet<WarehouseItem> WarehouseItems { get; set; }
         public DbSet<WarehouseTransaction> WarehouseTransactions { get; set; }
-
         public DbSet<WarehouseTransactionItem> WarehouseTransactionItems { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

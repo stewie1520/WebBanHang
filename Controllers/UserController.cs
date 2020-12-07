@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+
 using WebBanHang.DTOs.User;
 using WebBanHang.Services.Authorization;
 using WebBanHang.Services.Users;
@@ -25,7 +26,7 @@ namespace WebBanHang.Controllers
         }
 
         /// <summary>
-        /// Login with username and password
+        /// Login with email and password
         /// </summary>
         /// <param name="userLogin"></param>
         /// <remarks>
@@ -33,7 +34,7 @@ namespace WebBanHang.Controllers
         /// 
         ///     POST /login
         ///     {
-        ///         "username": "donghuuhieu1520@gmail.com",
+        ///         "email": "donghuuhieu1520@gmail.com",
         ///         "password": "123456"
         ///     }
         /// </remarks>

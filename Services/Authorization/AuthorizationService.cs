@@ -70,8 +70,9 @@ namespace WebBanHang.Services.Authorization
                     return response;
                 }
 
+                string accessToken = CreateToken(user);
 
-                response.Data = CreateToken(user);
+                response.Data = accessToken;
                 return response;
             }
             catch (Exception ex)
