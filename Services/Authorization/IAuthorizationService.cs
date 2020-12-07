@@ -11,7 +11,7 @@ namespace WebBanHang.Services.Authorization
     public interface IAuthorizationService<T>
     {
         Task<ServiceResponse<int>> Register(CustomerRegisterDto customerRegister);
-        Task<ServiceResponse<string>> Login(UserLoginDto userLogin);
+        Task<ServiceResponse<UserCredentialDto>> Login(UserLoginDto userLogin);
         Task<bool> UserExists(string email);
     }
 }

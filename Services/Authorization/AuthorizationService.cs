@@ -42,9 +42,9 @@ namespace WebBanHang.Services.Authorization
         /// </summary>
         /// <param name="userLogin"></param>
         /// <returns></returns>
-        public async Task<ServiceResponse<string>> Login(UserLoginDto userLogin)
+        public async Task<ServiceResponse<UserCredentialDto>> Login(UserLoginDto userLogin)
         {
-            var response = new ServiceResponse<string>();
+            var response = new ServiceResponse<UserCredentialDto>();
 
             try
             {
@@ -70,9 +70,19 @@ namespace WebBanHang.Services.Authorization
                     return response;
                 }
 
-                string accessToken = CreateToken(user);
+                var refreshToken = CreateRefreshToken();
+                await _context.RefreshTokens.AddAsync(refreshToken);
+                await _context.SaveChangeWithValidationAsync();
 
-                response.Data = accessToken;
+                var expiredAt = DateTime.UtcNow.AddMinutes(15);
+
+                response.Data = new UserCredentialDto()
+                {
+                    AccessToken = CreateToken(user, expiredAt),
+                    RefreshToken = refreshToken.Token,
+                    ExpiredAt = expiredAt,
+                };
+
                 return response;
             }
             catch (Exception ex)

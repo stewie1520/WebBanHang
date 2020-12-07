@@ -59,9 +59,9 @@ namespace WebBanHang.Services.Authorization
         /// Generate a token from user info
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="expirationInMinutes"></param>
+        /// <param name="expiredAt"></param>
         /// <returns></returns>
-        private string CreateToken(T user, double expirationInMinutes = 15)
+        private string CreateToken(T user, DateTime expiredAt)
         {
             var claims = new List<Claim>
             {
@@ -78,7 +78,7 @@ namespace WebBanHang.Services.Authorization
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(expirationInMinutes),
+                Expires = expiredAt,
                 SigningCredentials = signingCredential,
             };
 
@@ -88,5 +88,12 @@ namespace WebBanHang.Services.Authorization
             return tokenHandler.WriteToken(token);
         }
         #endregion
+
+        private RefreshToken CreateRefreshToken(double expirationInMinutes = 1 * 24 * 60) =>
+            new RefreshToken()
+            {
+                Token = Guid.NewGuid().ToString(),
+                ExpiredAt = DateTime.UtcNow.AddMinutes(expirationInMinutes),
+            };
     }
 }
