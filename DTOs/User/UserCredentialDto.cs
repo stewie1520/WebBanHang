@@ -7,5 +7,6 @@ namespace WebBanHang.DTOs.User
         public string RefreshToken { get; set; }
         public string AccessToken { get; set; }
         public DateTime ExpiredAt { get; set; }
+        public GetUserDto UserInfo { get; set; }
     }
 }
