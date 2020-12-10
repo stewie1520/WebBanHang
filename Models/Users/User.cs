@@ -8,6 +8,8 @@ namespace WebBanHang.Models
     public class User : BaseModel, ISoftDelete, IIdentity
     {
         [Required]
+        public string Avatar { get; set; }
+        [Required]
         public string Name { get; set; }
         [Required, EmailAddress]
         public string Email { get; set; }

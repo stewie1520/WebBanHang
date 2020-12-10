@@ -81,6 +81,7 @@ namespace WebBanHang.Services.Authorization
                     AccessToken = CreateToken(user, expiredAt),
                     RefreshToken = refreshToken.Token,
                     ExpiredAt = expiredAt,
+                    UserInfo = _mapper.Map<GetUserDto>(user),
                 };
 
                 return response;
