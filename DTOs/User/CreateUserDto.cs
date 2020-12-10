@@ -8,6 +8,7 @@ namespace WebBanHang.DTOs.User
 {
     public class CreateUserDto
     {
+        public string Avatar { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public DateTime BirthDate { get; set; }
