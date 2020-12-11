@@ -4,18 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 using WebBanHang.Extensions.DataContext;
 using WebBanHang.Data;
 using WebBanHang.Models;
 using WebBanHang.DTOs.User;
 using WebBanHang.DTOs.Customers;
+using WebBanHang.Services.Exceptions;
 
 namespace WebBanHang.Services.Authorization
 {
@@ -70,7 +67,7 @@ namespace WebBanHang.Services.Authorization
                     return response;
                 }
 
-                var refreshToken = CreateRefreshToken();
+                var refreshToken = CreateRefreshToken(user.Email);
                 await _context.RefreshTokens.AddAsync(refreshToken);
                 await _context.SaveChangeWithValidationAsync();
 
@@ -162,5 +159,67 @@ namespace WebBanHang.Services.Authorization
             }
         }
         #endregion
+
+
+        public async Task<ServiceResponse<UserCredentialDto>> RefreshAsync(RefreshTokenDto refreshDto)
+        {
+            var response = new ServiceResponse<UserCredentialDto>();
+
+            try
+            {
+                var refreshToken = refreshDto.RefreshToken;
+                var email = refreshDto.Email;
+
+                var dbRefreshToken = await _context.RefreshTokens
+                    .FirstOrDefaultAsync(x =>
+                        x.Token == refreshToken &&
+                        DateTime.Compare(x.ExpiredAt, DateTime.UtcNow) >= 0 &&
+                        x.Email == email);
+
+                var dbUser = await _context.Set<T>().FirstOrDefaultAsync(x => x.Email == email);
+
+                if (dbRefreshToken == null || dbUser == null)
+                {
+                    throw new RefreshTokenExpiredException();
+                }
+
+                _context.RefreshTokens.Remove(dbRefreshToken);
+                var newRefreshToken = CreateRefreshToken(email);
+
+                await _context.RefreshTokens.AddAsync(newRefreshToken);
+                await _context.SaveChangeWithValidationAsync();
+
+                var expiredAt = DateTime.UtcNow.AddMinutes(15);
+
+                response.Data = new UserCredentialDto()
+                {
+                    AccessToken = CreateToken(dbUser, expiredAt),
+                    RefreshToken = newRefreshToken.Token,
+                    ExpiredAt = expiredAt,
+                    UserInfo = _mapper.Map<GetUserDto>(dbUser),
+                };
+
+                return response;
+
+            }
+            catch (BaseServiceException ex)
+            {
+                _logger.LogError(ex.Message, ex.StackTrace);
+                response.Success = false;
+                response.Message = ex.ErrorMessage;
+                response.Code = ex.Code;
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex.StackTrace);
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.AUTH_UNEXPECTED_ERROR;
+
+                return response;
+            }
+        }
     }
 }

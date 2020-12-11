@@ -89,9 +89,10 @@ namespace WebBanHang.Services.Authorization
         }
         #endregion
 
-        private RefreshToken CreateRefreshToken(double expirationInMinutes = 1 * 24 * 60) =>
+        private RefreshToken CreateRefreshToken(string email, double expirationInMinutes = 1 * 24 * 60) =>
             new RefreshToken()
             {
+                Email = email,
                 Token = Guid.NewGuid().ToString(),
                 ExpiredAt = DateTime.UtcNow.AddMinutes(expirationInMinutes),
             };
