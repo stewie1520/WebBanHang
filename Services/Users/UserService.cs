@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using WebBanHang.Data;
 using WebBanHang.DTOs.User;
 using WebBanHang.Models;
+using WebBanHang.Services.Exceptions;
 
 namespace WebBanHang.Services.Users
 {
@@ -93,6 +95,41 @@ namespace WebBanHang.Services.Users
                 return response;
             }
             return response;
+        }
+
+        public async Task<ServiceResponse<GetUserDto>> GetUserAsync(string userEmail)
+        {
+            var response = new ServiceResponse<GetUserDto>();
+
+            try
+            {
+                var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == userEmail);
+                if (dbUser == null)
+                {
+                    throw new UserNotFoundException();
+                }
+
+                response.Data = _mapper.Map<GetUserDto>(dbUser);
+                return response;
+            }
+            catch (BaseServiceException ex)
+            {
+                response.Success = false;
+                response.Message = ex.ErrorMessage;
+                response.Code = ex.Code;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.USER_UNEXPECTED_ERROR;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
         }
     }
 }

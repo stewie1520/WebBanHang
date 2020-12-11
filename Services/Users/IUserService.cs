@@ -11,5 +11,6 @@ namespace WebBanHang.Services.Users
     {
         Task<ServiceResponse<List<GetUserDto>>> GetAllUsers(int page, int perpage);
         Task<ServiceResponse<GetUserDto>> CreateUser(CreateUserDto newUser);
+        Task<ServiceResponse<GetUserDto>> GetUserAsync(string userEmail);
     }
 }
