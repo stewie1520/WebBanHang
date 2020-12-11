@@ -12,6 +12,7 @@ namespace WebBanHang.Services.Authorization
     {
         Task<ServiceResponse<int>> Register(CustomerRegisterDto customerRegister);
         Task<ServiceResponse<UserCredentialDto>> Login(UserLoginDto userLogin);
+        Task<ServiceResponse<UserCredentialDto>> RefreshAsync(RefreshTokenDto dto);
         Task<bool> UserExists(string email);
     }
 }

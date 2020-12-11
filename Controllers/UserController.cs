@@ -93,5 +93,18 @@ namespace WebBanHang.Controllers
 
             return BadRequest(response);
         }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshDto)
+        {
+            var res = await _userAuth.RefreshAsync(refreshDto);
+
+            if (res.Success)
+            {
+                return Ok(res);
+            }
+
+            return BadRequest(res);
+        }
     }
 }

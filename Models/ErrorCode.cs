@@ -13,6 +13,7 @@ namespace WebBanHang.Models
         // Errors related with authorization service goes between 100 -> 199
         // Add your code here
         AUTH_USER_EXISTED,
+        AUTH_REFRESH_TOKEN_EXPIRED,
         AUTH_UNEXPECTED_ERROR = 199,
         FILE_UPLOAD_ERROR = 200,
         FILE_UPLOAD_EXTENSION_NOT_PERMITTED = 299,
