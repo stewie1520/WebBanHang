@@ -62,7 +62,7 @@ namespace WebBanHang
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IWarehouseTransactionService, WarehouseTransactionService>();
             services.AddScoped<IWarehouseTransactionItemService, WarehouseTransactionItemService>();
-            
+
             services.AddCors(options => options.AddPolicy("EasePolicy", builder =>
             {
                 builder.AllowAnyOrigin()
@@ -78,7 +78,7 @@ namespace WebBanHang
 
             services.AddDbContext<DataContext>(optionBuilder =>
                 optionBuilder.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
-            
+
             services.AddAutoMapper(typeof(Startup));
 
             services.AddSwaggerGen(options =>
@@ -107,7 +107,7 @@ namespace WebBanHang
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey,
                 });
-                
+
                 options.AddRequiredAuthorizationHeader();
             });
 
@@ -122,6 +122,18 @@ namespace WebBanHang
                         ValidateIssuer = false,
                         ValidateAudience = false,
                     };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                            {
+                                context.Response.Headers.Add("Token-Expired", "true");
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
         }
 
@@ -135,7 +147,8 @@ namespace WebBanHang
             app.UseCors("EasePolicy");
 
             app.UseSwagger();
-            app.UseSwaggerUI(setupAction => {
+            app.UseSwaggerUI(setupAction =>
+            {
                 setupAction.SwaggerEndpoint("/swagger/WebBanHang/swagger.json", "WebBanHang");
             });
 
