@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 using WebBanHang.DTOs.User;
 using WebBanHang.Services.Authorization;
@@ -19,10 +22,12 @@ namespace WebBanHang.Controllers
     {
         private readonly IUserService _service;
         private readonly IAuthorizationService<User> _userAuth;
-        public UserController(IAuthorizationService<User> userAuth, IUserService service)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserController(IAuthorizationService<User> userAuth, IUserService service, IHttpContextAccessor httpContextAccessor)
         {
             _service = service;
             _userAuth = userAuth;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -68,6 +73,25 @@ namespace WebBanHang.Controllers
                 return BadRequest(response);
 
             return Ok(response);
+        }
+
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> GetMyInfo()
+        {
+            string userIndentifier = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIndentifier == null)
+            {
+                return Forbid();
+            }
+
+            var response = await _service.GetUserAsync(userIndentifier);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return BadRequest(response);
         }
     }
 }
