@@ -7,14 +7,16 @@ using WebBanHang.DTOs.Roles;
 
 namespace WebBanHang.DTOs.User
 {
-    public class GetUserDto
-    {
-        public Gender Gender { get; set; }
-        public string Avatar { get; set; }
-        public string Name { get; set; }
-        [EmailAddress, Required]
-        public string Email { get; set; }
-        public DateTime BirthDate { get; set; }
-        public List<GetRoleDto> Roles { get; set; }
-    }
+  public class GetUserDto
+  {
+    public Gender Gender { get; set; }
+    public string Avatar { get; set; }
+    public string Name { get; set; }
+    [EmailAddress, Required]
+    public string Email { get; set; }
+    public DateTime BirthDate { get; set; }
+    public List<GetRoleDto> Roles { get; set; }
+    public string Phone { get; set; }
+    public string Address { get; set; }
+  }
 }
