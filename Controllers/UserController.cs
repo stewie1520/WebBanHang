@@ -113,6 +113,25 @@ namespace WebBanHang.Controllers
       return BadRequest(response);
     }
 
+    [HttpPost("me/password")]
+    [Authorize]
+    public async Task<IActionResult> UpdateMyPassword([FromBody] UpdateUserPasswordDto dto)
+    {
+      string userIndentifier = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+      if (userIndentifier == null)
+      {
+        return Forbid();
+      }
+
+      var response = await _userAuth.UpdateUserPasswordAsync(userIndentifier, dto);
+      if (response.Success)
+      {
+        return Ok(response);
+      }
+
+      return BadRequest(response);
+    }
+
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshDto)
     {
