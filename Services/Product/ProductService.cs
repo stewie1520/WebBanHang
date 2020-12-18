@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
+
 using WebBanHang.DTOs.Products;
 using WebBanHang.Models;
 using WebBanHang.Data;
 using WebBanHang.Extensions.DataContext;
 using WebBanHang.Services.Exceptions;
-using Microsoft.AspNetCore.Http;
 
 namespace WebBanHang.Services.Products
 {
@@ -229,6 +230,68 @@ namespace WebBanHang.Services.Products
           }
 
           dbProduct.Category = category;
+        }
+
+        if (dbProduct.IsManageVariant)
+        {
+          if (updateProductDto.IsManageVariant)
+          {
+            // We only care about children when IsManageVariant = true
+            var newVariantDtos = updateProductDto.Children?.Where(child => child.Id == 0).ToList();
+            var newVariants = _mapper.Map<List<Product>>(newVariantDtos);
+            foreach (var variant in newVariants)
+            {
+              variant.Parent = dbProduct;
+              variant.Status = dbProduct.Status;
+              variant.Category = dbProduct.Category;
+              variant.IsManageVariant = false;
+              variant.IsVariant = true;
+            }
+            await _context.Products.AddRangeAsync(newVariants);
+
+            var existedVariantDtos = updateProductDto.Children?.Where(child => child.Id != 0).ToList();
+            var existedVariants = _mapper.Map<List<Product>>(existedVariantDtos);
+
+            foreach (var existedVariant in existedVariants)
+            {
+              existedVariant.Category = dbProduct.Category;
+              existedVariant.IsManageVariant = false;
+              existedVariant.IsVariant = true;
+            }
+
+            _context.Products.UpdateRange(existedVariants);
+
+            var deletedVariants = await _context.Products
+              .Include(x => x.Parent)
+              .Include(p => p.Images)
+              .Include(p => p.Category)
+              .Include(p => p.Children).ThenInclude(child => child.Images)
+              .Include(p => p.Children).ThenInclude(child => child.Category)
+              .Include(p => p.Children).ThenInclude(child => child.Children)
+              .Where(x => x.Parent.Id == dbProduct.Id && !existedVariants.Select(exist => exist.Id).Contains(x.Id))
+              .ToListAsync();
+
+            foreach (var variant in deletedVariants)
+            {
+              variant.IsDeleted = true;
+            }
+
+            _context.Products.UpdateRange(deletedVariants);
+          }
+          else
+          {
+            var deletedVariants = await _context.Products
+              .Include(x => x.Parent)
+              .Where(x => x.Parent.Id == dbProduct.Id)
+              .ToListAsync();
+
+            foreach (var variant in deletedVariants)
+            {
+              variant.IsDeleted = true;
+            }
+
+            _context.Products.UpdateRange(deletedVariants);
+          }
         }
 
         // Processing for images updating
