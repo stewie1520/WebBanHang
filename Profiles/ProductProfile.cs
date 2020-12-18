@@ -17,7 +17,31 @@ namespace WebBanHang.Profiles
           .ForMember(dto => dto.ParentId, opts => opts.ConvertUsing(new ParentIdFormatter(), src => src.Parent))
           .ForMember(dto => dto.ImageUrls, opts => opts.ConvertUsing(new ProductImageFormatter(), src => src.Images))
           .ForMember(dto => dto.CategoryId, opts => opts.ConvertUsing(new CategoryFormater<int>(), src => src.Category))
-          .ForMember(dto => dto.CategoryText, opts => opts.ConvertUsing(new CategoryFormater<string>(), src => src.Category));
+          .ForMember(dto => dto.CategoryText, opts => opts.ConvertUsing(new CategoryFormater<string>(), src => src.Category))
+          .ForMember(dto => dto.Children, opts => opts.ConvertUsing(new ChildrenFormatter(), src => src.Children));
+    }
+
+    private class ChildrenFormatter : IValueConverter<IEnumerable<Product>, IEnumerable<GetProductDto>>
+    {
+      public IEnumerable<GetProductDto> Convert(IEnumerable<Product> products, ResolutionContext context)
+      {
+        var result = new List<GetProductDto>();
+
+        if (products == null)
+        {
+          return result;
+        }
+
+        foreach (var product in products)
+        {
+          if (product != null)
+          {
+            result.Add(context.Mapper.Map<GetProductDto>(product));
+          }
+        }
+
+        return result;
+      }
     }
 
     private class CategoryFormater<T> : IValueConverter<Category, T>

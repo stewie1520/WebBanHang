@@ -173,6 +173,9 @@ namespace WebBanHang.Services.Products
         var dbProduct = await _context.Products
             .Include(p => p.Images)
             .Include(p => p.Category)
+            .Include(p => p.Children).ThenInclude(child => child.Images)
+            .Include(p => p.Children).ThenInclude(child => child.Category)
+            .Include(p => p.Children).ThenInclude(child => child.Children)
             .FirstOrDefaultAsync(p => p.Id == productId);
 
         if (dbProduct == null)
