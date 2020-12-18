@@ -7,9 +7,10 @@ using WebBanHang.Models;
 
 namespace WebBanHang.Services.FileUploader
 {
-    public interface IFileUploaderService
-    {
-        Task<ServiceResponse<FileUpload>> UploadImageAsync(Stream inputStream, string fileName, long fileLength, string contentType);
-        bool Validate(Stream inputStream, string fileName);
-    }
+  public interface IFileUploaderService
+  {
+    Task<ServiceResponse<FileUpload>> UploadImageAsync(Stream inputStream, string fileName, long fileLength, string contentType);
+    Task<ServiceResponse<string>> GetPresignedUploadUrlAsync(WebBanHang.DTOs.Uploads.FileInfo fileInfo);
+    bool Validate(Stream inputStream, string fileName);
+  }
 }

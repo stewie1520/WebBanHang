@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 
 using WebBanHang.Services.FileUploader;
 using WebBanHang.Models;
-
 namespace WebBanHang.Controllers
 {
   [ApiController]
@@ -87,6 +86,20 @@ namespace WebBanHang.Controllers
         Success = true,
         Data = imageUrls
       });
+    }
+
+    [HttpPost("sign")]
+    [Authorize]
+    public async Task<IActionResult> GetPresignedUploadUrl(WebBanHang.DTOs.Uploads.FileInfo fileInfo)
+    {
+      var response = await _service.GetPresignedUploadUrlAsync(fileInfo);
+
+      if (!response.Success)
+      {
+        return BadRequest(response);
+      }
+
+      return Ok(response);
     }
   }
 }
