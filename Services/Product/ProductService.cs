@@ -232,6 +232,11 @@ namespace WebBanHang.Services.Products
           dbProduct.Category = category;
         }
 
+        dbProduct.Price = updateProductDto.Price;
+        dbProduct.Description = updateProductDto.Description;
+        dbProduct.Status = updateProductDto.Status;
+        dbProduct.Name = updateProductDto.Name;
+
         if (dbProduct.IsManageVariant)
         {
           if (updateProductDto.IsManageVariant)
@@ -293,6 +298,9 @@ namespace WebBanHang.Services.Products
             _context.Products.UpdateRange(deletedVariants);
           }
         }
+
+        dbProduct.IsManageVariant = updateProductDto.IsManageVariant;
+        dbProduct.IsVariant = updateProductDto.IsVariant;
 
         // Processing for images updating
         if (!dbProduct.Images.Select(image => image.Url).SequenceEqual(updateProductDto.ImageUrls))
