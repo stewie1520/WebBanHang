@@ -21,6 +21,7 @@ namespace WebBanHang.DTOs.Products
     public int CategoryId { get; set; }
     public int? ParentId { get; set; }
     public IEnumerable<int> ChildrenIds { get; set; }
+    public IEnumerable<GetProductDto> Children { get; set; }
     public IEnumerable<string> ImageUrls { get; set; }
     public ProductStatus Status { get; set; }
     public string CategoryText { get; set; }
