@@ -305,7 +305,8 @@ namespace WebBanHang.Services.Products
             Url = url,
             ProductId = dbProduct.Id,
           }).ToList();
-          dbProduct.Images = newProductImages;
+          // dbProduct.Images = newProductImages;
+          await _context.ProductImages.AddRangeAsync(newProductImages);
         }
 
         try
