@@ -68,6 +68,21 @@ namespace WebBanHang.Services.Products
 
         product.Category = category;
 
+        if (product.IsManageVariant)
+        {
+          var childrenProducts = _mapper.Map<IEnumerable<Product>>(product.Children);
+          foreach (var childProduct in childrenProducts)
+          {
+            childProduct.Category = category;
+            childProduct.IsVariant = true;
+            childProduct.IsManageVariant = false;
+            childProduct.Parent = product;
+            childProduct.Status = product.Status;
+          }
+
+          await _context.Products.AddRangeAsync(childrenProducts);
+        }
+
         var productImages = newProductDto.ImageUrls.Select(url => new ProductImage { Url = url, Product = product }).ToList();
         product.Images = productImages;
 
@@ -362,7 +377,7 @@ namespace WebBanHang.Services.Products
           _context.Products.Update(dbProduct);
           await _context.SaveChangeWithValidationAsync();
         }
-        catch (DbUpdateConcurrencyException ex)
+        catch (DbUpdateConcurrencyException)
         {
           throw new ProductNotFoundException();
         }
