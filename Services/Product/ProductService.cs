@@ -100,6 +100,46 @@ namespace WebBanHang.Services.Products
       }
     }
 
+    public async Task<ServiceResponse<int>> DeleteProductAsync(int productId)
+    {
+      var response = new ServiceResponse<int>();
+      try
+      {
+        var dbProduct = await _context.Products
+          .Include(x => x.Category)
+          .FirstOrDefaultAsync(x => x.Id == productId);
+
+        if (dbProduct == null)
+        {
+          throw new ProductNotFoundException();
+        }
+
+        dbProduct.IsDeleted = true;
+        await _context.SaveChangeWithValidationAsync();
+
+        response.Data = productId;
+        return response;
+      }
+      catch (BaseServiceException ex)
+      {
+        response.Success = false;
+        response.Message = ex.ErrorMessage;
+        response.Code = ex.Code;
+
+        _logger.LogError(ex.Message, ex.StackTrace);
+        return response;
+      }
+      catch (Exception ex)
+      {
+        response.Success = false;
+        response.Message = ex.Message;
+        response.Code = ErrorCode.PRODUCT_UNEXPECTED_ERROR;
+
+        _logger.LogError(ex.Message, ex.StackTrace);
+        return response;
+      }
+    }
+
     public async Task<ServiceResponse<List<GetProductDto>>> GetAllProductsAsync(string name, int page, int perpage, QueryProductDto query)
     {
 
