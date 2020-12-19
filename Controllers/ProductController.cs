@@ -75,5 +75,19 @@ namespace WebBanHang.Controllers
 
       return Ok(response);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+      var res = await _services.DeleteProductAsync(id);
+
+      if (!res.Success)
+      {
+        return BadRequest(res);
+      }
+
+      return Ok(res);
+    }
+
   }
 }
