@@ -75,7 +75,7 @@ namespace WebBanHang.Services.Products
 
           for (int i = 0; i < childrenProducts.Count(); i++)
           {
-            var childProduct = childrenProducts[0];
+            var childProduct = childrenProducts[i];
             childProduct.Category = category;
             childProduct.IsVariant = true;
             childProduct.IsManageVariant = false;
@@ -90,6 +90,7 @@ namespace WebBanHang.Services.Products
             });
           }
 
+          product.Children = childrenProducts;
           await _context.Products.AddRangeAsync(childrenProducts);
           await _context.WarehouseItems.AddRangeAsync(newChildWarehouseItems);
         }
