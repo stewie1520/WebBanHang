@@ -70,17 +70,28 @@ namespace WebBanHang.Services.Products
 
         if (product.IsManageVariant)
         {
-          var childrenProducts = _mapper.Map<IEnumerable<Product>>(product.Children);
-          foreach (var childProduct in childrenProducts)
+          var childrenProducts = _mapper.Map<List<Product>>(newProductDto.Children);
+          var newChildWarehouseItems = new List<WebBanHang.Models.WarehouseItem>();
+
+          for (int i = 0; i < childrenProducts.Count(); i++)
           {
+            var childProduct = childrenProducts[0];
             childProduct.Category = category;
             childProduct.IsVariant = true;
             childProduct.IsManageVariant = false;
             childProduct.Parent = product;
             childProduct.Status = product.Status;
+
+            newChildWarehouseItems.Add(new WebBanHang.Models.WarehouseItem
+            {
+              Product = childProduct,
+              AverageCost = newProductDto.Children[i].Cost,
+              Quantity = newProductDto.Children[i].Quantity,
+            });
           }
 
           await _context.Products.AddRangeAsync(childrenProducts);
+          await _context.WarehouseItems.AddRangeAsync(newChildWarehouseItems);
         }
 
         var productImages = newProductDto.ImageUrls.Select(url => new ProductImage { Url = url, Product = product }).ToList();
@@ -88,7 +99,7 @@ namespace WebBanHang.Services.Products
 
         _context.Products.Add(product);
 
-        var newWarehouseItem = new WarehouseItem
+        var newWarehouseItem = new WebBanHang.Models.WarehouseItem
         {
           Product = product,
           AverageCost = newProductDto.Cost,
