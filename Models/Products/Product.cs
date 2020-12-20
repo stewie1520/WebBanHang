@@ -15,7 +15,7 @@ namespace WebBanHang.Models
     [Required]
     public Category Category { get; set; }
     public Product Parent { get; set; }
-    public IEnumerable<Product> Children { get; set; }
+    public List<Product> Children { get; set; }
     public IEnumerable<ProductImage> Images { get; set; }
     public ProductStatus Status { get; set; } = ProductStatus.Private;
     [Required]
