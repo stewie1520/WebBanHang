@@ -9,6 +9,6 @@ namespace WebBanHang.Services.WarehouseItem
 {
   public interface IWarehouseItemService
   {
-    Task<ServiceResponse<List<GetWarehouseItemDto>>> GetAllWarehouseItemsAsync(PaginationParam pagination, QueryWarehouseItemDto query);
+    Task<ServiceResponse<IEnumerable<GetWarehouseItemDto>>> GetAllWarehouseItemsAsync(PaginationParam pagination, QueryWarehouseItemDto query);
   }
 }
