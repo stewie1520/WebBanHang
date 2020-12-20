@@ -25,13 +25,14 @@ namespace WebBanHang.Services.WarehouseItem
       _logger = logger;
       _mapper = mapper;
     }
-    public async Task<ServiceResponse<List<GetWarehouseItemDto>>> GetAllWarehouseItemsAsync(PaginationParam pagination, QueryWarehouseItemDto query)
+    public async Task<ServiceResponse<IEnumerable<GetWarehouseItemDto>>> GetAllWarehouseItemsAsync(PaginationParam pagination, QueryWarehouseItemDto query)
     {
-      var response = new ServiceResponse<List<GetWarehouseItemDto>>();
+      var response = new ServiceResponse<IEnumerable<GetWarehouseItemDto>>();
       try
       {
         var dbWarehouseItems = await _context.WarehouseItems
-          .Include(x => x.Product)
+          .Include(x => x.Product).ThenInclude(p => p.Images)
+          .Include(x => x.Product).ThenInclude(p => p.Category)
           .Take(pagination.PerPage)
           .Skip(pagination.Skip())
           .ToListAsync();
@@ -39,7 +40,8 @@ namespace WebBanHang.Services.WarehouseItem
         var totalItemsQuantity = await _context.WarehouseItems
           .CountAsync();
 
-        response.Data = _mapper.Map<List<GetWarehouseItemDto>>(dbWarehouseItems);
+        // response.Data = _mapper.Map<IEnumerable<GetWarehouseItemDto>>(dbWarehouseItems); 
+        response.Data = dbWarehouseItems.Select(item => _mapper.Map<GetWarehouseItemDto>(item)); 
         response.Pagination = new Pagination
         {
           CurrentPage = pagination.Page,
