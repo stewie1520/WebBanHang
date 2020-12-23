@@ -48,7 +48,8 @@ namespace WebBanHang.Services.WarehouseItem
         response.Pagination = new Pagination
         {
           CurrentPage = pagination.Page,
-          TotalPage = pagination.TotalPage(totalItemsQuantity)
+          TotalPage = pagination.TotalPage(totalItemsQuantity),
+          Count = totalItemsQuantity,
         };
 
         return response;

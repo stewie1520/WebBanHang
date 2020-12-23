@@ -4,5 +4,6 @@ namespace WebBanHang.Models
     {
         public int CurrentPage { get; set; }
         public int TotalPage { get; set; }
+        public int Count { get; set; }
     }
 }
