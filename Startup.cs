@@ -33,6 +33,7 @@ using WebBanHang.Models;
 using WebBanHang.Services.WarehouseTransaction;
 using WebBanHang.Services.WarehouseTransactionItem;
 using WebBanHang.Services.WarehouseItem;
+using WebBanHang.Services.Manufacturers;
 
 namespace WebBanHang
 {
@@ -64,6 +65,7 @@ namespace WebBanHang
       services.AddScoped<IWarehouseTransactionService, WarehouseTransactionService>();
       services.AddScoped<IWarehouseTransactionItemService, WarehouseTransactionItemService>();
       services.AddScoped<IWarehouseItemService, WarehouseItemService>();
+      services.AddScoped<IManufacturerService, ManufacturerService>();
 
       services.AddCors(options => options.AddPolicy("EasePolicy", builder =>
       {
