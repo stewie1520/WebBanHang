@@ -214,7 +214,8 @@ namespace WebBanHang.Services.Products
         var Pagination = new Pagination
         {
           CurrentPage = page,
-          TotalPage = (int)Math.Ceiling(1.0m * TotalPage / perpage)
+          TotalPage = (int)Math.Ceiling(1.0m * TotalPage / perpage),
+          Count = TotalPage
         };
 
         response.Data = dbProducts.Select(p => _mapper.Map<GetProductDto>(p)).ToList();
