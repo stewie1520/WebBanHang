@@ -33,15 +33,18 @@ namespace WebBanHang.Services.WarehouseItem
         var dbWarehouseItems = await _context.WarehouseItems
           .Include(x => x.Product).ThenInclude(p => p.Images)
           .Include(x => x.Product).ThenInclude(p => p.Category)
-          .Take(pagination.PerPage)
+          .Where(x => x.Product.IsDeleted == false)
           .Skip(pagination.Skip())
+          .Take(pagination.PerPage)
           .ToListAsync();
 
         var totalItemsQuantity = await _context.WarehouseItems
+          .Include(x => x.Product)
+          .Where(x => x.Product.IsDeleted == false)
           .CountAsync();
 
         // response.Data = _mapper.Map<IEnumerable<GetWarehouseItemDto>>(dbWarehouseItems); 
-        response.Data = dbWarehouseItems.Select(item => _mapper.Map<GetWarehouseItemDto>(item)); 
+        response.Data = dbWarehouseItems.Select(item => _mapper.Map<GetWarehouseItemDto>(item));
         response.Pagination = new Pagination
         {
           CurrentPage = pagination.Page,
