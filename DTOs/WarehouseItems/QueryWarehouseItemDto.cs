@@ -8,5 +8,6 @@ namespace WebBanHang.DTOs.WarehouseItems
 {
   public class QueryWarehouseItemDto
   {
+    public string Name { get; set; }
   }
 }
