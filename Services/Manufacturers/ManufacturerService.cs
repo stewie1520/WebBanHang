@@ -107,13 +107,13 @@ namespace WebBanHang.Services.Manufacturers
       try
       {
         var dbManufacturers = await _context.Manufacturers
-          .Where(x => x.Name.Contains(query.Name))
+          .Where(x => query.Name == null ? true : x.Name.Contains(query.Name))
           .Skip(pagination.Skip())
           .Take(pagination.PerPage)
           .ToListAsync();
 
         var totalItemsQuantity = await _context.Manufacturers
-          .Where(x => x.Name.Contains(query.Name))
+          .Where(x => query.Name == null ? true : x.Name.Contains(query.Name))
           .CountAsync();
 
         response.Data = _mapper.Map<List<GetManufacturerDto>>(dbManufacturers);
