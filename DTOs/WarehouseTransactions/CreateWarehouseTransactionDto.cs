@@ -10,16 +10,16 @@
     [Required]
     public WarehouseTransactionType TransactionType { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public Manufacturer Manufacturer { get; set; }
+    public int ManufacturerId { get; set; }
 
     public string Description { get; set; }
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-      if (TransactionType == WarehouseTransactionType.Import && Manufacturer == null)
+      if (TransactionType == WarehouseTransactionType.Import && ManufacturerId == 0)
       {
         yield return new ValidationResult(
             errorMessage: "Bạn cần điền thông tin nhà cung cấp",
-            memberNames: new[] { nameof(TransactionType), nameof(Manufacturer) }
+            memberNames: new[] { nameof(TransactionType), nameof(ManufacturerId) }
         );
       }
     }
