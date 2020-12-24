@@ -155,6 +155,7 @@ namespace WebBanHang.Services.WarehouseTransaction
 
         var dbWarehouseTransactions = await _context.WarehouseTransactions
             .Include(x => x.Manufacturer)
+            .Include(x => x.CreatedBy)
             .Where(x => x.TransactionType == warehouseTransactionType)
             .Skip((pagination.Page - 1) * pagination.PerPage)
             .Take(pagination.PerPage)
