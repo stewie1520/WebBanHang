@@ -104,7 +104,7 @@ namespace WebBanHang.Controllers
     /// </summary>
     /// <param name="manufacturerId"></param>
     /// <returns></returns>
-    [HttpDelete("manufacturerId")]
+    [HttpDelete("{manufacturerId}")]
     public async Task<IActionResult> DeleteOne(int manufacturerId)
     {
       var response = await _service.DeleteManufacturerAsync(manufacturerId);
