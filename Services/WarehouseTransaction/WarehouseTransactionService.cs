@@ -163,6 +163,7 @@ namespace WebBanHang.Services.WarehouseTransaction
 
         var totalWarehouseTransactionQuantity = await _context.WarehouseTransactions
           .Include(x => x.Manufacturer)
+          .Where(x => x.TransactionType == warehouseTransactionType)
           .CountAsync();
 
         response.Data = _mapper.Map<IEnumerable<GetWarehouseTransactionWithoutItemDto>>(dbWarehouseTransactions);
