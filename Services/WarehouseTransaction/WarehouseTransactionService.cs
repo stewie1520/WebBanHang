@@ -145,6 +145,36 @@ namespace WebBanHang.Services.WarehouseTransaction
       }
     }
 
+    public async Task<ServiceResponse<List<GetManufacturerDto>>> GetAllManufacturersAsync()
+    {
+      var response = new ServiceResponse<List<GetManufacturerDto>>();
+
+      try
+      {
+        var dbManufacturers = await _context.Manufacturers.ToListAsync();
+        response.Data = _mapper.Map<List<GetManufacturerDto>>(dbManufacturers);
+        return response;
+      }
+      catch (BaseServiceException ex)
+      {
+        response.Success = false;
+        response.Message = ex.ErrorMessage;
+        response.Code = ex.Code;
+
+        _logger.LogError(ex.Message, ex.StackTrace);
+        return response;
+      }
+      catch (Exception ex)
+      {
+        response.Success = false;
+        response.Message = ex.Message;
+        response.Code = ErrorCode.WAREHOUSE_TRANSACTION_UNEXPECTED_ERROR;
+
+        _logger.LogError(ex.Message, ex.StackTrace);
+        return response;
+      }
+    }
+
     public async Task<ServiceResponse<IEnumerable<GetWarehouseTransactionWithoutItemDto>>> GetAllWarehouseTransactionsAsync(PaginationParam pagination, int type = 0)
     {
       var response = new ServiceResponse<IEnumerable<GetWarehouseTransactionWithoutItemDto>>();
