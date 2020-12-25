@@ -15,13 +15,12 @@ namespace WebBanHang.Data
   public class DataContext : DbContext
   {
     public DataContext(DbContextOptions<DataContext> options) : base(options) { }
-
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Address> Addresses { get; set; }
-    public DbSet<Basket> Orders { get; set; }
-    public DbSet<BasketItem> ProductOrders { get; set; }
+    public DbSet<Basket> Baskets { get; set; }
+    public DbSet<BasketItem> BasketItems { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Role> Roles { get; set; }

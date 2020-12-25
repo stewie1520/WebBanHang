@@ -16,7 +16,6 @@ namespace WebBanHang.Controllers
   public class UploadController : ControllerBase
   {
     private readonly IFileUploaderService _service;
-
     public UploadController(IFileUploaderService service)
     {
       _service = service;

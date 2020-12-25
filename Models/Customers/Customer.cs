@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebBanHang.Models
 {
-    public class Customer : BaseModel, IValidatableObject, ISoftDelete, IIdentity
+    public class Customer : BaseModel, ISoftDelete, IIdentity
     {
         [Required]
         public string FullName { get; set; }
@@ -19,10 +19,10 @@ namespace WebBanHang.Models
 
         public IEnumerable<Address> Addresses { get; private set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            throw new NotImplementedException();
-        }
+        // public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        // {
+        //     throw new NotImplementedException();
+        // }
         [Required]
         public bool IsDeleted { get; set; } = false;
     }

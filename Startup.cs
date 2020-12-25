@@ -34,6 +34,7 @@ using WebBanHang.Services.WarehouseTransaction;
 using WebBanHang.Services.WarehouseTransactionItem;
 using WebBanHang.Services.WarehouseItem;
 using WebBanHang.Services.Manufacturers;
+using WebBanHang.Services.Baskets;
 
 namespace WebBanHang
 {
@@ -56,6 +57,7 @@ namespace WebBanHang
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+      services.AddScoped<IBasketsService, BasketsService>();
       services.AddScoped<IAuthorizationService<User>, AuthorizationService<User>>();
       services.AddScoped<IAuthorizationService<Customer>, AuthorizationService<Customer>>();
       services.AddScoped<IFileUploaderService, FileUploaderService>();
