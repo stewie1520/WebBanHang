@@ -17,5 +17,6 @@ namespace WebBanHang.Services.WarehouseTransaction
 
     Task<ServiceResponse<GetWarehouseTransactionWithoutItemDto>> DeleteWarehouseTransactionAsync(int warehouseTransactionId);
     Task<ServiceResponse<List<GetManufacturerDto>>> GetAllManufacturersAsync();
+    Task<ServiceResponse<List<GetProductDto>>> GetAllProductsAsync();
   }
 }

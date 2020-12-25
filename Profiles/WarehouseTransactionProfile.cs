@@ -10,6 +10,15 @@ namespace WebBanHang.Profiles
 {
   public class WarehouseTransactionProfile : Profile
   {
+    private class AvatarFormatter : IValueConverter<IEnumerable<ProductImage>, string>
+    {
+      public string Convert(IEnumerable<ProductImage> sourceMember, ResolutionContext context)
+      {
+        if (sourceMember.Count() == 0)
+          return "";
+        return sourceMember.First()?.Url ?? "";
+      }
+    }
     private class CreatedByFormatter : IValueConverter<User, int>
     {
       public int Convert(User user, ResolutionContext context)
@@ -50,6 +59,8 @@ namespace WebBanHang.Profiles
 
       CreateMap<WarehouseTransaction, GetWarehouseTransactionWithoutItemDto>();
       CreateMap<Manufacturer, GetManufacturerDto>();
+      CreateMap<Product, GetProductDto>()
+        .ForMember(dest => dest.Avatar, option => option.ConvertUsing(new AvatarFormatter(), src => src.Images));
     }
   }
 }

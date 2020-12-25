@@ -90,5 +90,19 @@ namespace WebBanHang.Controllers
 
       return BadRequest(res);
     }
+
+    [HttpGet("products")]
+    [Authorize]
+    public async Task<IActionResult> GetAllProducts()
+    {
+      var res = await _service.GetAllProductsAsync();
+
+      if (res.Success)
+      {
+        return Ok(res);
+      }
+
+      return BadRequest(res);
+    }
   }
 }
