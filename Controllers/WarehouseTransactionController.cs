@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using WebBanHang.Services.WarehouseTransaction;
 using WebBanHang.DTOs.WarehouseTransactions;
 using WebBanHang.DTOs.Commons;
+using WebBanHang.Models;
 
 namespace WebBanHang.Controllers
 {
@@ -26,6 +27,20 @@ namespace WebBanHang.Controllers
     public async Task<IActionResult> CreateWarehouseTransaction([FromBody] CreateWarehouseTransactionDto dto)
     {
       var res = await _service.CreateWarehouseTransactionAsync(dto);
+
+      if (res.Success)
+      {
+        return Ok(res);
+      }
+
+      return BadRequest(res);
+    }
+
+    [HttpPut("{warehouseTransactionId}")]
+    [Authorize]
+    public async Task<IActionResult> UpdateWarehouseTransactionStatus(int warehouseTransactionId, [FromBody] WarehouseTransactionStatus status)
+    {
+      var res = await _service.UpdateWarehouseTransactionStatusAsync(warehouseTransactionId, status);
 
       if (res.Success)
       {
