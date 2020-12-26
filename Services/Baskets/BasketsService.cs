@@ -8,6 +8,8 @@ using WebBanHang.DTOs.Baskets;
 using WebBanHang.Models;
 using WebBanHang.Extensions.DataContext;
 using System.Linq;
+using WebBanHang.Services.Customers;
+using WebBanHang.DTOs.Customers;
 
 namespace WebBanHang.Services.Baskets
 {
@@ -16,11 +18,13 @@ namespace WebBanHang.Services.Baskets
         private readonly DataContext _context;
         private readonly ILogger<BasketsService> _logger;
         private readonly IMapper _mapper;
-        public BasketsService(DataContext context, IMapper mapper, ILogger<BasketsService> logger)
+        private readonly ICustomersService _customerService;
+        public BasketsService(DataContext context, IMapper mapper, ILogger<BasketsService> logger, ICustomersService customerService)
         {
             _context = context;
             _mapper = mapper;
             _logger = logger;
+            _customerService = customerService;
         }
         public async Task<ServiceResponse<GetBasketDto>> CreateBasketAsync(CreateBasketDto createBasketDto)
         {
@@ -28,16 +32,28 @@ namespace WebBanHang.Services.Baskets
             try 
             {
                 var basket = _mapper.Map<Basket>(createBasketDto);
-                // Check for customer if customerId exist
-                if (createBasketDto.CustomerId != null){
+                // Check for customer if email exist
+                if (createBasketDto.Email != null){
 
-                    var customer = _context.Customers.FirstOrDefault(c => c.Id == createBasketDto.CustomerId.Value);
-                    if (customer == null){
-                        response.Success = false;
-                        response.Message = "Customer id is not found";
-                        response.Code = ErrorCode.NONE;
-
-                        return response;
+                    var customer = _context.Customers.FirstOrDefault(c => c.Email == createBasketDto.Email);
+                    if (customer == null)
+                    {
+                        // Tạo khách hàng (bỏ sau)
+                        var customerDto = new CreateCustomerDto
+                        {
+                            Email = createBasketDto.Email,
+                            FullName = createBasketDto.FullName,
+                            Gender = Gender.Unknown,
+                            Address = createBasketDto.Address
+                        };
+                        var createNewCustomerResult = await _customerService.CreateCustomerAsync(customerDto);
+                        if (!createNewCustomerResult.Success) {
+                            response.Success = false;
+                            response.Message = createNewCustomerResult.Message;
+                            
+                            return response;
+                        }
+                        customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == response.Data.Id);
                     }
                     basket.Customer = customer;
                 }

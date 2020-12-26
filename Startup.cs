@@ -35,6 +35,7 @@ using WebBanHang.Services.WarehouseTransactionItem;
 using WebBanHang.Services.WarehouseItem;
 using WebBanHang.Services.Manufacturers;
 using WebBanHang.Services.Baskets;
+using WebBanHang.Services.Customers;
 
 namespace WebBanHang
 {
@@ -61,6 +62,7 @@ namespace WebBanHang
       services.AddScoped<IAuthorizationService<User>, AuthorizationService<User>>();
       services.AddScoped<IAuthorizationService<Customer>, AuthorizationService<Customer>>();
       services.AddScoped<IFileUploaderService, FileUploaderService>();
+      services.AddScoped<ICustomersService, CustomersService>();
       services.AddScoped<ICategoriesService, CategoriesService>();
       services.AddScoped<IProductService, ProductService>();
       services.AddScoped<IUserService, UserService>();

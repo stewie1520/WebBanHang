@@ -15,6 +15,9 @@ namespace WebBanHang.Profiles
                 .ForMember(x => x.Password, opt => opt.Ignore());
             CreateMap<Customer, CustomerRegisterDto>()
                 .ForMember(x => x.Password, opt => opt.Ignore());
+            CreateMap<CreateCustomerDto, Customer>();
+            CreateMap<Customer, GetCustomerDto>();
+            CreateMap<CreateAddressDto, Address>();
         }
     }
 }
