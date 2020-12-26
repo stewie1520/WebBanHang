@@ -20,5 +20,6 @@ namespace WebBanHang.Models
     public ProductStatus Status { get; set; } = ProductStatus.Private;
     [Required]
     public bool IsDeleted { get; set; } = false;
+    public WarehouseItem WarehouseItem { get; set; }
   }
 }
