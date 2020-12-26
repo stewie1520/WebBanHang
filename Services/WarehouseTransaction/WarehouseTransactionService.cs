@@ -183,6 +183,7 @@ namespace WebBanHang.Services.WarehouseTransaction
       {
         var dbProducts = await _context.Products
           .Include(p => p.Images)
+          .Include(p => p.WarehouseItem)
           .ToListAsync();
         response.Data = dbProducts.Select(x => _mapper.Map<GetProductDto>(x)).ToList();
         return response;

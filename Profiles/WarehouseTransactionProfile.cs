@@ -10,6 +10,18 @@ namespace WebBanHang.Profiles
 {
   public class WarehouseTransactionProfile : Profile
   {
+    private class CostFormatter : IValueConverter<WarehouseItem, double>
+    {
+      public double Convert(WarehouseItem sourceMember, ResolutionContext context)
+      {
+        if (sourceMember != null)
+        {
+          return sourceMember.AverageCost;
+        }
+        return 0;
+      }
+    }
+
     private class AvatarFormatter : IValueConverter<IEnumerable<ProductImage>, string>
     {
       public string Convert(IEnumerable<ProductImage> sourceMember, ResolutionContext context)
@@ -60,7 +72,8 @@ namespace WebBanHang.Profiles
       CreateMap<WarehouseTransaction, GetWarehouseTransactionWithoutItemDto>();
       CreateMap<Manufacturer, GetManufacturerDto>();
       CreateMap<Product, GetProductDto>()
-        .ForMember(dest => dest.Avatar, option => option.ConvertUsing(new AvatarFormatter(), src => src.Images));
+        .ForMember(dest => dest.Avatar, option => option.ConvertUsing(new AvatarFormatter(), src => src.Images))
+        .ForMember(dest => dest.Cost, option => option.ConvertUsing(new CostFormatter(), src => src.WarehouseItem));
     }
   }
 }
