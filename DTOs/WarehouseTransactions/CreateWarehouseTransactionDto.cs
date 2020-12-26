@@ -3,6 +3,7 @@
   using System;
   using System.ComponentModel.DataAnnotations;
   using WebBanHang.Models;
+  using WebBanHang.DTOs.WarehouseTransactionItems;
   using System.Collections.Generic;
 
   public class CreateWarehouseTransactionDto : IValidatableObject
@@ -13,6 +14,8 @@
     public int ManufacturerId { get; set; }
 
     public string Description { get; set; }
+
+    public IEnumerable<AddWarehouseItemDto> WarehouseTransactionItems { get; set; }
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
       if (TransactionType == WarehouseTransactionType.Import && ManufacturerId == 0)
