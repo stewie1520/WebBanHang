@@ -75,7 +75,7 @@ namespace WebBanHang.Services.WarehouseTransaction
         var dbWarehouseTransactionItems = dto.WarehouseTransactionItems.Select(item => new WarehouseTransactionItem
         {
           WarehouseTransaction = newTransaction,
-          ProductId = item.ProductId,
+          ProductId = item.Id,
           Cost = item.Cost,
           Quantity = item.Quantity
         });
