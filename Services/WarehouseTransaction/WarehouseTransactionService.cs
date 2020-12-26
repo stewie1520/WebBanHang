@@ -71,6 +71,17 @@ namespace WebBanHang.Services.WarehouseTransaction
         };
 
         await _context.WarehouseTransactions.AddAsync(newTransaction);
+
+        var dbWarehouseTransactionItems = dto.WarehouseTransactionItems.Select(item => new WarehouseTransactionItem
+        {
+          WarehouseTransaction = newTransaction,
+          ProductId = item.ProductId,
+          Cost = item.Cost,
+          Quantity = item.Quantity
+        });
+
+
+        await _context.WarehouseTransactionItems.AddRangeAsync(dbWarehouseTransactionItems);
         await _context.SaveChangeWithValidationAsync();
 
         response.Data = _mapper.Map<GetWarehouseTransactionDto>(newTransaction);
