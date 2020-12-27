@@ -189,9 +189,9 @@ namespace WebBanHang.Services.Products
           productQuery = productQuery.Where(p => p.IsManageVariant == query.IsManageVariant.Value);
         }
 
-        if (query.CategoryId.HasValue)
+        if (query.CategoryId != null && query.CategoryId.Count() != 0)
         {
-          productQuery = productQuery.Where(p => p.Category.Id == query.CategoryId.Value);
+          productQuery = productQuery.Where(p => query.CategoryId.Contains(p.Category.Id));
         }
 
         if (query.IsVariant.HasValue)
@@ -199,9 +199,19 @@ namespace WebBanHang.Services.Products
           productQuery = productQuery.Where(p => p.IsVariant == query.IsVariant.Value);
         }
 
-        if (query.Status.HasValue)
+        if (query.Status != null && query.Status.Count() != 0)
         {
-          productQuery = productQuery.Where(p => p.Status == query.Status.Value);
+          productQuery = productQuery.Where(p => query.Status.Contains(p.Status));
+        }
+
+        if (query.Min != -1)
+        {
+          productQuery = productQuery.Where(p => p.Price >= query.Min);
+        }
+
+        if (query.Max != -1)
+        {
+          productQuery = productQuery.Where(p => p.Price < query.Max);
         }
 
         TotalPage = await productQuery.CountAsync();
