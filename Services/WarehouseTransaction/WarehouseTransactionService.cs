@@ -71,6 +71,17 @@ namespace WebBanHang.Services.WarehouseTransaction
         };
 
         await _context.WarehouseTransactions.AddAsync(newTransaction);
+
+        var dbWarehouseTransactionItems = dto.WarehouseTransactionItems.Select(item => new WarehouseTransactionItem
+        {
+          WarehouseTransaction = newTransaction,
+          ProductId = item.ProductId,
+          Cost = item.Cost,
+          Quantity = item.Quantity
+        });
+
+
+        await _context.WarehouseTransactionItems.AddRangeAsync(dbWarehouseTransactionItems);
         await _context.SaveChangeWithValidationAsync();
 
         response.Data = _mapper.Map<GetWarehouseTransactionDto>(newTransaction);
@@ -145,6 +156,69 @@ namespace WebBanHang.Services.WarehouseTransaction
       }
     }
 
+    public async Task<ServiceResponse<List<GetManufacturerDto>>> GetAllManufacturersAsync()
+    {
+      var response = new ServiceResponse<List<GetManufacturerDto>>();
+
+      try
+      {
+        var dbManufacturers = await _context.Manufacturers.ToListAsync();
+        response.Data = _mapper.Map<List<GetManufacturerDto>>(dbManufacturers);
+        return response;
+      }
+      catch (BaseServiceException ex)
+      {
+        response.Success = false;
+        response.Message = ex.ErrorMessage;
+        response.Code = ex.Code;
+
+        _logger.LogError(ex.Message, ex.StackTrace);
+        return response;
+      }
+      catch (Exception ex)
+      {
+        response.Success = false;
+        response.Message = ex.Message;
+        response.Code = ErrorCode.WAREHOUSE_TRANSACTION_UNEXPECTED_ERROR;
+
+        _logger.LogError(ex.Message, ex.StackTrace);
+        return response;
+      }
+    }
+
+    public async Task<ServiceResponse<List<GetProductDto>>> GetAllProductsAsync()
+    {
+      var response = new ServiceResponse<List<GetProductDto>>();
+
+      try
+      {
+        var dbProducts = await _context.Products
+          .Include(p => p.Images)
+          .Include(p => p.WarehouseItem)
+          .ToListAsync();
+        response.Data = dbProducts.Select(x => _mapper.Map<GetProductDto>(x)).ToList();
+        return response;
+      }
+      catch (BaseServiceException ex)
+      {
+        response.Success = false;
+        response.Message = ex.ErrorMessage;
+        response.Code = ex.Code;
+
+        _logger.LogError(ex.Message, ex.StackTrace);
+        return response;
+      }
+      catch (Exception ex)
+      {
+        response.Success = false;
+        response.Message = ex.Message;
+        response.Code = ErrorCode.WAREHOUSE_TRANSACTION_UNEXPECTED_ERROR;
+
+        _logger.LogError(ex.Message, ex.StackTrace);
+        return response;
+      }
+    }
+
     public async Task<ServiceResponse<IEnumerable<GetWarehouseTransactionWithoutItemDto>>> GetAllWarehouseTransactionsAsync(PaginationParam pagination, int type = 0)
     {
       var response = new ServiceResponse<IEnumerable<GetWarehouseTransactionWithoutItemDto>>();
@@ -163,6 +237,7 @@ namespace WebBanHang.Services.WarehouseTransaction
 
         var totalWarehouseTransactionQuantity = await _context.WarehouseTransactions
           .Include(x => x.Manufacturer)
+          .Where(x => x.TransactionType == warehouseTransactionType)
           .CountAsync();
 
         response.Data = _mapper.Map<IEnumerable<GetWarehouseTransactionWithoutItemDto>>(dbWarehouseTransactions);
@@ -241,9 +316,9 @@ namespace WebBanHang.Services.WarehouseTransaction
       try
       {
         var dbWarehouseTransaction = await _context.WarehouseTransactions
-            .Include(x => x.Items)
-            .ThenInclude(x => x.Product)
-            .ThenInclude(x => x.Images)
+            .Include(x => x.Items).ThenInclude(x => x.Product).ThenInclude(x => x.Images)
+            .Include(x => x.Items).ThenInclude(x => x.Product).ThenInclude(x => x.Category)
+            .Include(x => x.Manufacturer)
             .Include(x => x.CreatedBy)
             .FirstOrDefaultAsync(x => x.Id == warehouseTransactionId);
 

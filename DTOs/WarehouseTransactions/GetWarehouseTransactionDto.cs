@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 using WebBanHang.DTOs.User;
+using WebBanHang.DTOs.WarehouseTransactionItems;
 namespace WebBanHang.DTOs.WarehouseTransactions
 {
   using WebBanHang.Models;
@@ -18,7 +19,7 @@ namespace WebBanHang.DTOs.WarehouseTransactions
 
     public string Description { get; set; }
     public Manufacturer Manufacturer { get; set; }
-    public IEnumerable<TransactionItem> Items { get; set; }
+    public IEnumerable<GetWarehouseTransactionItemDto> WarehouseTransactionItems { get; set; }
 
     public class TransactionItem
     {
