@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using WebBanHang.Models;
 
 namespace WebBanHang.DTOs.Products
@@ -7,7 +9,9 @@ namespace WebBanHang.DTOs.Products
     public int? ParentId { get; set; }
     public bool? IsVariant { get; set; }
     public bool? IsManageVariant { get; set; }
-    public ProductStatus? Status { get; set; }
-    public int? CategoryId { get; set; }
+    public List<ProductStatus> Status { get; set; }
+    public List<int> CategoryId { get; set; }
+    public int Min { get; set; } = -1;
+    public int Max { get; set; } = -1;
   }
 }
