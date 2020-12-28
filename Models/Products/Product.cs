@@ -21,5 +21,14 @@ namespace WebBanHang.Models
     [Required]
     public bool IsDeleted { get; set; } = false;
     public WarehouseItem WarehouseItem { get; set; }
+    public List<string> Tags { get; set; }
+    public List<string> Features { get; set; }
+    public double Height { get; set; }
+    public double Width { get; set; }
+    public double Weight { get; set; }
+    public double Length { get; set; }
+
+    public bool IsDiscount { get; set; } = false;
+    public int PriceBeforeDiscount { get; set; }
   }
 }

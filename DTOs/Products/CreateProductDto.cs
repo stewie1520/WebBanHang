@@ -19,8 +19,18 @@ namespace WebBanHang.DTOs.Products
     public List<string> ImageUrls { get; set; }
     public ProductStatus Status { get; set; } = ProductStatus.Private;
     public List<CreateProductDto> Children { get; set; }
+    public List<string> Tags { get; set; }
     public int Quantity { get; set; } = 0;
     public int Cost { get; set; } = 0;
+
+    public List<string> Features { get; set; }
+    public double Height { get; set; }
+    public double Width { get; set; }
+    public double Weight { get; set; }
+    public double Length { get; set; }
+
+    public bool IsDiscount { get; set; } = false;
+    public int PriceBeforeDiscount { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

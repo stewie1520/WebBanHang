@@ -98,7 +98,7 @@ namespace WebBanHang.Services.Products
         var productImages = newProductDto.ImageUrls.Select(url => new ProductImage { Url = url, Product = product }).ToList();
         product.Images = productImages;
 
-        _context.Products.Add(product);
+        await _context.Products.AddAsync(product);
 
         var newWarehouseItem = new WebBanHang.Models.WarehouseItem
         {
