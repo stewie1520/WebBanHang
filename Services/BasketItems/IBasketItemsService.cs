@@ -8,6 +8,6 @@ namespace WebBanHang.Services.Baskets
 {
      public interface IBasketItemsService
     {
-        Task<ServiceResponse<GetBasketItemDto>> CreateBasketItemAsync(CreateBasketItemDto basketItem, int basketId);
+        Task<ServiceResponse<GetBasketItemDto>> CreateBasketItemAsync(CreateBasketItemDto basketItem, Basket basket);
     }
 }

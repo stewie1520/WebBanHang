@@ -9,7 +9,11 @@ namespace WebBanHang.Services.Baskets
      public interface IBasketsService
     {
         Task<ServiceResponse<GetBasketDto>> CreateBasketAsync(CreateBasketDto basket);
-        Task<ServiceResponse<IEnumerable<GetBasketDto>>> GetAllWarehouseTransactionsAsync(PaginationParam pagination, int type = 0);
+        Task<ServiceResponse<IEnumerable<GetBasketWithoutItemDto>>> GetAllBasketsAsync(PaginationParam pagination, int type = 0);
+
+        Task<ServiceResponse<GetBasketDto>> GetBasketAsync(int basketId);
+
+        Task<ServiceResponse<GetBasketDto>> UpdateBasketStatusAsync(UpdateBasketStatusDto basket);
 
     }
 }

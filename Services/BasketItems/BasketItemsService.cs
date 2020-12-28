@@ -25,7 +25,7 @@ namespace WebBanHang.Services.BasketItems
             _mapper = mapper;
             _logger = logger;
         }
-        public async Task<ServiceResponse<GetBasketItemDto>> CreateBasketItemAsync(CreateBasketItemDto createBasketItemDto, int basketId)
+        public async Task<ServiceResponse<GetBasketItemDto>> CreateBasketItemAsync(CreateBasketItemDto createBasketItemDto, Basket basket)
         {
             var response = new ServiceResponse<GetBasketItemDto>();
             try {
@@ -38,9 +38,6 @@ namespace WebBanHang.Services.BasketItems
                     .FirstOrDefault(c => c.Id == createBasketItemDto.ProductId);
 
                 // var category = _mapper.Map<Category>(product.Category);
-
-                var basket = _context.Baskets.FirstOrDefault(c => c.Id == basketId);
-
                 basketItem.Product = product;
 
                 basketItem.Basket = basket;
