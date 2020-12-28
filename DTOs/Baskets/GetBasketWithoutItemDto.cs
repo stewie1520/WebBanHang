@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using System;
 using System.ComponentModel.DataAnnotations;
 using WebBanHang.DTOs.BasketItems;
 using WebBanHang.Models;
 
 namespace WebBanHang.DTOs.Baskets
 {
-    public class GetBasketDto
+    public class GetBasketWithoutItemDto
     {
         [Required]
         public int Id { get; set; }
@@ -15,10 +16,9 @@ namespace WebBanHang.DTOs.Baskets
         [Required]
         public int? CustomerId { get; set; }
         [Required]
-        public IEnumerable<GetBasketItemDto> BasketItems { get; set; }
-        [Required]
         public string Note { get; set; }
         [Required]
         public int TotalPrice { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

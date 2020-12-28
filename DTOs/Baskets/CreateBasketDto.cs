@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using WebBanHang.DTOs.BasketItems;
 using WebBanHang.DTOs.Customers;
+using WebBanHang.DTOs.BasketItems;
 using WebBanHang.Models;
 
-namespace WebBanHang.DTOs.Baskets 
+namespace WebBanHang.DTOs.Baskets
 {
     public class CreateBasketDto {
         [Required]
