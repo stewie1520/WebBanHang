@@ -44,6 +44,20 @@ namespace WebBanHang.Controllers
 
       return Ok(response);
     }
+
+    [HttpGet("shop")]
+    public async Task<IActionResult> GetAllShop([FromQuery(Name = "name")] string name, [FromQuery] QueryProductDto query, [FromQuery(Name = "page")] int page = 1, [FromQuery(Name = "perpage")] int perpage = BaseService.DefaultPerPage)
+    {
+      var response = await _services.GetAllProductsShopAsync(name, page, perpage, query);
+
+      if (!response.Success)
+      {
+        return BadRequest(response);
+      }
+
+      return Ok(response);
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery(Name = "name")] string name, [FromQuery] QueryProductDto query, [FromQuery(Name = "page")] int page = 1, [FromQuery(Name = "perpage")] int perpage = BaseService.DefaultPerPage)
     {
