@@ -22,6 +22,66 @@ namespace WebBanHang.Services.Products
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
+    private async Task<(List<Product>, Pagination)> _GetAllProducts(string name, int page, int perpage, QueryProductDto query)
+    {
+      var productSkip = (page - 1) * perpage;
+      int TotalPage;
+      List<Product> dbProducts = null;
+
+      var productQuery = _context.Products.AsQueryable();
+
+      if (name != null)
+      {
+        productQuery = productQuery.Where(p => EF.Functions.Contains(p.Name, name));
+      }
+
+      if (query.IsManageVariant.HasValue)
+      {
+        productQuery = productQuery.Where(p => p.IsManageVariant == query.IsManageVariant.Value);
+      }
+
+      if (query.CategoryId != null && query.CategoryId.Count() != 0)
+      {
+        productQuery = productQuery.Where(p => query.CategoryId.Contains(p.Category.Id));
+      }
+
+      if (query.IsVariant.HasValue)
+      {
+        productQuery = productQuery.Where(p => p.IsVariant == query.IsVariant.Value);
+      }
+
+      if (query.Status != null && query.Status.Count() != 0)
+      {
+        productQuery = productQuery.Where(p => query.Status.Contains(p.Status));
+      }
+
+      if (query.Min != -1)
+      {
+        productQuery = productQuery.Where(p => p.Price >= query.Min);
+      }
+
+      if (query.Max != -1)
+      {
+        productQuery = productQuery.Where(p => p.Price < query.Max);
+      }
+
+      TotalPage = await productQuery.CountAsync();
+      dbProducts = await productQuery
+          .Include(p => p.Images)
+          .Include(p => p.Category)
+          .Skip(productSkip)
+          .Take(perpage).ToListAsync();
+
+      var Pagination = new Pagination
+      {
+        CurrentPage = page,
+        TotalPage = (int)Math.Ceiling(1.0m * TotalPage / perpage),
+        Count = TotalPage
+      };
+
+      return (dbProducts, Pagination);
+    }
+
     public ProductService(DataContext context, ILogger<ProductService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
       _context = context;
@@ -173,62 +233,30 @@ namespace WebBanHang.Services.Products
       var response = new ServiceResponse<List<GetProductDto>>();
       try
       {
-        var productSkip = (page - 1) * perpage;
-        int TotalPage;
-        List<Product> dbProducts = null;
-
-        var productQuery = _context.Products.AsQueryable();
-
-        if (name != null)
-        {
-          productQuery = productQuery.Where(p => EF.Functions.Contains(p.Name, name));
-        }
-
-        if (query.IsManageVariant.HasValue)
-        {
-          productQuery = productQuery.Where(p => p.IsManageVariant == query.IsManageVariant.Value);
-        }
-
-        if (query.CategoryId != null && query.CategoryId.Count() != 0)
-        {
-          productQuery = productQuery.Where(p => query.CategoryId.Contains(p.Category.Id));
-        }
-
-        if (query.IsVariant.HasValue)
-        {
-          productQuery = productQuery.Where(p => p.IsVariant == query.IsVariant.Value);
-        }
-
-        if (query.Status != null && query.Status.Count() != 0)
-        {
-          productQuery = productQuery.Where(p => query.Status.Contains(p.Status));
-        }
-
-        if (query.Min != -1)
-        {
-          productQuery = productQuery.Where(p => p.Price >= query.Min);
-        }
-
-        if (query.Max != -1)
-        {
-          productQuery = productQuery.Where(p => p.Price < query.Max);
-        }
-
-        TotalPage = await productQuery.CountAsync();
-        dbProducts = await productQuery
-            .Include(p => p.Images)
-            .Include(p => p.Category)
-            .Skip(productSkip)
-            .Take(perpage).ToListAsync();
-
-        var Pagination = new Pagination
-        {
-          CurrentPage = page,
-          TotalPage = (int)Math.Ceiling(1.0m * TotalPage / perpage),
-          Count = TotalPage
-        };
-
+        var (dbProducts, Pagination) = await _GetAllProducts(name, page, perpage, query);
         response.Data = dbProducts.Select(p => _mapper.Map<GetProductDto>(p)).ToList();
+        response.Pagination = Pagination;
+      }
+      catch (Exception ex)
+      {
+        response.Success = false;
+        response.Message = ex.Message;
+        response.Code = ErrorCode.PRODUCT_UNEXPECTED_ERROR;
+
+        _logger.LogError(ex.Message, ex.StackTrace);
+
+        return response;
+      }
+      return response;
+    }
+
+    public async Task<ServiceResponse<List<GetAllProductShopDto>>> GetAllProductsShopAsync(string name, int page, int perpage, QueryProductDto query)
+    {
+      var response = new ServiceResponse<List<GetAllProductShopDto>>();
+      try
+      {
+        var (dbProducts, Pagination) = await _GetAllProducts(name, page, perpage, query);
+        response.Data = dbProducts.Select(p => _mapper.Map<GetAllProductShopDto>(p)).ToList();
         response.Pagination = Pagination;
       }
       catch (Exception ex)
