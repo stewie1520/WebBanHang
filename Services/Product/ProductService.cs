@@ -310,6 +310,16 @@ namespace WebBanHang.Services.Products
           dbProduct.Category = category;
         }
 
+        dbProduct.Tags = updateProductDto.Tags;
+        dbProduct.Features = updateProductDto.Features;
+        dbProduct.Height = updateProductDto.Height;
+        dbProduct.Width = updateProductDto.Width;
+        dbProduct.Weight = updateProductDto.Weight;
+        dbProduct.Length = updateProductDto.Length;
+        dbProduct.IsDiscount = updateProductDto.IsDiscount;
+        dbProduct.PriceBeforeDiscount = updateProductDto.PriceBeforeDiscount;
+
+
         dbProduct.Price = updateProductDto.Price;
         dbProduct.Description = updateProductDto.Description;
         dbProduct.Status = updateProductDto.Status;
