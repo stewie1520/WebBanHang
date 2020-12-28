@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebBanHang.DTOs.BasketItems
 {
-    public class GetBasketItems
+    public class GetBasketItemDto
     {
         [Required]
         public int BasketId { get; set; }

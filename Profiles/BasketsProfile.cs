@@ -1,4 +1,5 @@
 using WebBanHang.DTOs.Baskets;
+using WebBanHang.DTOs.BasketItems;
 using AutoMapper;
 using WebBanHang.Models;
 
@@ -17,6 +18,9 @@ namespace WebBanHang.Profiles
         public BasketProfile(){
             CreateMap<CreateBasketDto, Basket>();
             CreateMap<Basket, GetBasketDto>();
+            // Create basket Items
+            CreateMap<CreateBasketItemDto, BasketItem>();
+            CreateMap<BasketItem, GetBasketItemDto>();
         }
     }
 }

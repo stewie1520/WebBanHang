@@ -10,6 +10,11 @@ using WebBanHang.Extensions.DataContext;
 using System.Linq;
 using WebBanHang.Services.Customers;
 using WebBanHang.DTOs.Customers;
+using System.Collections.Generic;
+using WebBanHang.DTOs.BasketItems;
+using System.Collections.ObjectModel;
+using Microsoft.VisualBasic;
+using WebBanHang.DTOs.Commons;
 
 namespace WebBanHang.Services.Baskets
 {
@@ -19,12 +24,14 @@ namespace WebBanHang.Services.Baskets
         private readonly ILogger<BasketsService> _logger;
         private readonly IMapper _mapper;
         private readonly ICustomersService _customerService;
-        public BasketsService(DataContext context, IMapper mapper, ILogger<BasketsService> logger, ICustomersService customerService)
+        private readonly IBasketItemsService _basketItemService;
+        public BasketsService(DataContext context, IMapper mapper, ILogger<BasketsService> logger, ICustomersService customerService, IBasketItemsService basketItemService)
         {
             _context = context;
             _mapper = mapper;
             _logger = logger;
             _customerService = customerService;
+            _basketItemService = basketItemService;
         }
         public async Task<ServiceResponse<GetBasketDto>> CreateBasketAsync(CreateBasketDto createBasketDto)
         {
@@ -57,14 +64,27 @@ namespace WebBanHang.Services.Baskets
                     }
                     basket.Customer = customer;
                 }
-
-
+                // Add basket item
+                
                 _context.Baskets.Add(basket);
 
                 await _context.SaveChangeWithValidationAsync();
 
                 var getBasketDto = _mapper.Map<GetBasketDto>(basket);
 
+                foreach (CreateBasketItemDto createBasketItem in createBasketDto.Items){
+                    await _basketItemService.CreateBasketItemAsync(createBasketItem, basket.Id);
+
+                    // if (!createNewBasketItemResult.Success) {
+
+                    //     response.Success = false;
+
+                    //     response.Message = createNewBasketItemResult.Message;
+                        
+                    //     return response;
+                    // }
+                }
+                 
                 response.Data = getBasketDto;
 
                 return response;
@@ -78,5 +98,10 @@ namespace WebBanHang.Services.Baskets
                 return response;
             }
         }
+
+        // public Task<ServiceResponse<IEnumerable<GetBasketDto>>> GetAllWarehouseTransactionsAsync(PaginationParam pagination, int type = 0)
+        // {
+            
+        // }
     }
 }

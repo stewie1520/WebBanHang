@@ -28,5 +28,6 @@ namespace WebBanHang.Controllers
 
             return Ok(response);
         }
+
     }
 }

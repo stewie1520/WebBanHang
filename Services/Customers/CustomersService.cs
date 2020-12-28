@@ -30,10 +30,15 @@ namespace WebBanHang.Services.Customers
             var response = new ServiceResponse<GetCustomerDto>();
             try {
                 var customer = _mapper.Map<Customer>(createCustomerDto);
+
                 var address = _mapper.Map<Address>(createCustomerDto.Address);
+
                 await _context.Customers.AddAsync(customer);
+
                 await _context.Addresses.AddAsync(address);
+                
                 address.Customer = customer;
+
                 // customer.Addresses.Append(address);
 
                 await _context.SaveChangeWithValidationAsync();
