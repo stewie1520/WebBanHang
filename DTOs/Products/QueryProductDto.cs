@@ -6,6 +6,8 @@ namespace WebBanHang.DTOs.Products
 {
   public class QueryProductDto
   {
+    public bool? SortByDate { get; set; }
+    public bool? IsDiscount { get; set; }
     public int? ParentId { get; set; }
     public bool? IsVariant { get; set; }
     public bool? IsManageVariant { get; set; }

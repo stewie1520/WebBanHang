@@ -35,6 +35,17 @@ namespace WebBanHang.Services.Products
         productQuery = productQuery.Where(p => EF.Functions.Contains(p.Name, name));
       }
 
+      if (query.SortByDate.HasValue && query.SortByDate.Value)
+      {
+        productQuery = productQuery.OrderByDescending(c => c.CreatedAt.Date)
+          .ThenBy(c => c.CreatedAt.TimeOfDay);
+      }
+
+      if (query.IsDiscount.HasValue)
+      {
+        productQuery = productQuery.Where(p => p.IsDiscount == query.IsDiscount.Value);
+      }
+
       if (query.IsManageVariant.HasValue)
       {
         productQuery = productQuery.Where(p => p.IsManageVariant == query.IsManageVariant.Value);
