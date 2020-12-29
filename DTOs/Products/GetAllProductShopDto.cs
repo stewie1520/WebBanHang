@@ -15,6 +15,7 @@ namespace WebBanHang.DTOs.Products
     public string Title { get; set; }
     public bool Sale { get; set; }
     public int Price { get; set; }
+    public ProductStatus Status { get; set; }
     public int SalePrice { get; set; }
     public List<GetCategoryShopDto> Categories { get; set; }
     public string Thumbnail { get; set; }
