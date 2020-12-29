@@ -21,6 +21,7 @@ namespace WebBanHang.DTOs.Products
     public IEnumerable<ThumbnailVariant> Variants { get; set; }
 
     public IEnumerable<BadgeItem> Badge { get; set; }
+    public List<string> Features { get; set; }
 
     public class ThumbnailVariant
     {
