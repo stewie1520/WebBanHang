@@ -267,7 +267,7 @@ namespace WebBanHang.Services.Products
       try
       {
         var (dbProducts, Pagination) = await _GetAllProducts(name, page, perpage, query);
-        response.Data = dbProducts.Select(p => _mapper.Map<GetAllProductShopDto>(p)).ToList();
+        response.Data = dbProducts.Select(p => _mapper.Map<GetAllProductShopDto>(p)).Where(p => p.Status != ProductStatus.Private).ToList();
         response.Pagination = Pagination;
       }
       catch (Exception ex)
