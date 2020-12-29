@@ -490,7 +490,7 @@ namespace WebBanHang.Services.Products
             .Include(p => p.Children).ThenInclude(child => child.Children)
             .FirstOrDefaultAsync(p => p.Id == productId);
 
-        if (dbProduct == null)
+        if (dbProduct == null || dbProduct.Status == ProductStatus.Private)
         {
           response.Success = false;
           response.Message = "Product not found";
