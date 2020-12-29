@@ -476,5 +476,43 @@ namespace WebBanHang.Services.Products
         return response;
       }
     }
+
+    public async Task<ServiceResponse<GetProductShopDto>> GetProductShopAsync(int productId)
+    {
+      var response = new ServiceResponse<GetProductShopDto>();
+      try
+      {
+        var dbProduct = await _context.Products
+            .Include(p => p.Images)
+            .Include(p => p.Category)
+            .Include(p => p.Children).ThenInclude(child => child.Images)
+            .Include(p => p.Children).ThenInclude(child => child.Category)
+            .Include(p => p.Children).ThenInclude(child => child.Children)
+            .FirstOrDefaultAsync(p => p.Id == productId);
+
+        if (dbProduct == null)
+        {
+          response.Success = false;
+          response.Message = "Product not found";
+          response.Code = ErrorCode.PRODUCT_NOT_FOUND;
+
+          return response;
+        }
+
+        response.Data = _mapper.Map<GetProductShopDto>(dbProduct);
+
+        return response;
+      }
+      catch (Exception ex)
+      {
+        response.Success = false;
+        response.Message = ex.Message;
+        response.Code = ErrorCode.PRODUCT_UNEXPECTED_ERROR;
+
+        _logger.LogError(ex.Message, ex.StackTrace);
+
+        return response;
+      }
+    }
   }
 }

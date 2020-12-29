@@ -45,6 +45,19 @@ namespace WebBanHang.Controllers
       return Ok(response);
     }
 
+    [HttpGet("shop/{productId}")]
+    public async Task<IActionResult> GetOneShop(int productId)
+    {
+      var response = await _services.GetProductShopAsync(productId);
+
+      if (!response.Success)
+      {
+        return BadRequest(response);
+      }
+
+      return Ok(response);
+    }
+
     [HttpGet("shop")]
     public async Task<IActionResult> GetAllShop([FromQuery(Name = "name")] string name, [FromQuery] QueryProductDto query, [FromQuery(Name = "page")] int page = 1, [FromQuery(Name = "perpage")] int perpage = BaseService.DefaultPerPage)
     {
