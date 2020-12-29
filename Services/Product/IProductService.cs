@@ -13,6 +13,7 @@ namespace WebBanHang.Services.Products
     Task<ServiceResponse<GetProductDto>> GetOneProductAsync(int productId);
     Task<ServiceResponse<List<GetProductDto>>> GetAllProductsAsync(string name, int page, int perpage, QueryProductDto query);
     Task<ServiceResponse<List<GetAllProductShopDto>>> GetAllProductsShopAsync(string name, int page, int perpage, QueryProductDto query);
+    Task<ServiceResponse<GetProductShopDto>> GetProductShopAsync(int productId);
     Task<ServiceResponse<GetProductDto>> UpdateProductAsync(UpdateProductDto updateProductDto);
     Task<ServiceResponse<int>> DeleteProductAsync(int productId);
   }

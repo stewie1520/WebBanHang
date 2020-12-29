@@ -14,7 +14,7 @@ namespace WebBanHang.Profiles
     {
       CreateMap<CreateProductDto, Product>();
       CreateMap<UpdateProductDto, Product>();
-      CreateMap<Product, GetAllProductShopDto>()
+      CreateMap<Product, GetProductShopDto>()
         .ForMember(dto => dto.Title, opts => opts.MapFrom(p => p.Name))
         .ForMember(dto => dto.Price, opts => opts.MapFrom(p => p.Price))
         .ForMember(dto => dto.Sale, opts => opts.MapFrom(p => p.IsDiscount))
@@ -22,13 +22,45 @@ namespace WebBanHang.Profiles
         .ForMember(dto => dto.Thumbnail, opts => opts.ConvertUsing(new ThumbnailConverter(), p => p.Images))
         .ForMember(dto => dto.Variants, opts => opts.ConvertUsing(new ThumbnailVariantsConverter(), p => p.Images))
         .ForMember(dto => dto.Categories, opts => opts.ConvertUsing(new CategoriesShopConverter(), p => p.Category))
-        ;
+        .ForMember(dto => dto.Children, opts => opts.ConvertUsing(new ChildrenShopFormatter(), src => src.Children));
+
+      CreateMap<Product, GetAllProductShopDto>()
+        .ForMember(dto => dto.Title, opts => opts.MapFrom(p => p.Name))
+        .ForMember(dto => dto.Price, opts => opts.MapFrom(p => p.Price))
+        .ForMember(dto => dto.Sale, opts => opts.MapFrom(p => p.IsDiscount))
+        .ForMember(dto => dto.SalePrice, opts => opts.MapFrom(p => p.PriceBeforeDiscount))
+        .ForMember(dto => dto.Thumbnail, opts => opts.ConvertUsing(new ThumbnailConverter(), p => p.Images))
+        .ForMember(dto => dto.Variants, opts => opts.ConvertUsing(new ThumbnailVariantsConverter(), p => p.Images))
+        .ForMember(dto => dto.Categories, opts => opts.ConvertUsing(new CategoriesShopConverter(), p => p.Category));
       CreateMap<Product, GetProductDto>()
           .ForMember(dto => dto.ParentId, opts => opts.ConvertUsing(new ParentIdFormatter(), src => src.Parent))
           .ForMember(dto => dto.ImageUrls, opts => opts.ConvertUsing(new ProductImageFormatter(), src => src.Images))
           .ForMember(dto => dto.CategoryId, opts => opts.ConvertUsing(new CategoryFormater<int>(), src => src.Category))
           .ForMember(dto => dto.CategoryText, opts => opts.ConvertUsing(new CategoryFormater<string>(), src => src.Category))
           .ForMember(dto => dto.Children, opts => opts.ConvertUsing(new ChildrenFormatter(), src => src.Children));
+    }
+
+    private class ChildrenShopFormatter : IValueConverter<List<Product>, List<GetProductShopDto>>
+    {
+      public List<GetProductShopDto> Convert(List<Product> sourceMember, ResolutionContext context)
+      {
+        var result = new List<GetProductShopDto>();
+
+        if (sourceMember == null)
+        {
+          return result;
+        }
+
+        foreach (var product in sourceMember)
+        {
+          if (product != null)
+          {
+            result.Add(context.Mapper.Map<GetProductShopDto>(product));
+          }
+        }
+
+        return result;
+      }
     }
 
     private class ChildrenFormatter : IValueConverter<IEnumerable<Product>, IEnumerable<GetProductDto>>
