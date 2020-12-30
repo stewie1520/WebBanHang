@@ -14,6 +14,7 @@ namespace WebBanHang.Models
     public string Note { get; set; }
     // TODO: Add property indicates which staff confirmed this order
     public IEnumerable<BasketItem> BasketItems { get; private set; }
+    public IEnumerable<BasketLog> Logs { get; set; }
     [Required]
     public Customer Customer { get; set; }
     [Required]

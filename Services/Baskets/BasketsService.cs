@@ -89,6 +89,11 @@ namespace WebBanHang.Services.Baskets
         basket.IsPaid = false;
         basket.Status = BasketStatus.Ordering;
 
+        _context.BasketLogs.Add(new BasketLog()
+        {
+          BasketId = basket.Id,
+          Status = basket.Status,
+        });
 
         await _context.SaveChangeWithValidationAsync();
 
@@ -181,6 +186,7 @@ namespace WebBanHang.Services.Baskets
             .ThenInclude(x => x.Images)
             .Include(x => x.Customer)
             .ThenInclude(x => x.Addresses)
+            .Include(x => x.Logs)
             .FirstOrDefaultAsync(c => c.Id == basketId);
 
         if (dbBasket == null)
@@ -231,6 +237,12 @@ namespace WebBanHang.Services.Baskets
         basket.Status = updateBasketStatusDto.Status;
 
         _context.Baskets.Update(basket);
+
+        _context.BasketLogs.Add(new BasketLog()
+        {
+          BasketId = basket.Id,
+          Status = basket.Status,
+        });
 
         await _context.SaveChangeWithValidationAsync();
 

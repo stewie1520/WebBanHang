@@ -20,6 +20,7 @@ namespace WebBanHang.Data
     public DbSet<Category> Categories { get; set; }
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Basket> Baskets { get; set; }
+    public DbSet<BasketLog> BasketLogs { get; set; }
     public DbSet<BasketItem> BasketItems { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Customer> Customers { get; set; }
