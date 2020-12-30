@@ -3,17 +3,18 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Microsoft.VisualBasic;
+
 using WebBanHang.Data;
 using WebBanHang.DTOs.Baskets;
 using WebBanHang.Models;
 using WebBanHang.Extensions.DataContext;
-using System.Linq;
+using WebBanHang.DTOs.BasketItems;
 using WebBanHang.Services.Customers;
 using WebBanHang.DTOs.Customers;
-using System.Collections.Generic;
-using WebBanHang.DTOs.BasketItems;
-using System.Collections.ObjectModel;
-using Microsoft.VisualBasic;
 using WebBanHang.DTOs.Commons;
 using WebBanHang.Commons;
 using WebBanHang.Services.Exceptions;
@@ -108,18 +109,38 @@ namespace WebBanHang.Services.Baskets
       }
     }
 
-    public async Task<ServiceResponse<IEnumerable<GetBasketWithoutItemDto>>> GetAllBasketsAsync(PaginationParam pagination, int type = 0)
+    public async Task<ServiceResponse<IEnumerable<GetBasketWithoutItemDto>>> GetAllBasketsAsync(PaginationParam pagination, QueryBasketDto query)
     {
       var response = new ServiceResponse<IEnumerable<GetBasketWithoutItemDto>>();
 
       try
       {
-        var dbBaskets = await _context.Baskets
+        var dbBasketsQuery = _context.Baskets.AsQueryable();
+
+        if (query.From.HasValue)
+        {
+          // GTE
+          dbBasketsQuery = dbBasketsQuery.Where(basket => basket.UpdatedAt.CompareTo(query.From.Value) > -1);
+        }
+
+        if (query.To.HasValue)
+        {
+          // LTE
+          dbBasketsQuery = dbBasketsQuery.Where(basket => basket.UpdatedAt.CompareTo(query.To.Value) < 1);
+        }
+
+        if (query.Status.HasValue)
+        {
+          dbBasketsQuery = dbBasketsQuery.Where(basket => basket.Status == query.Status);
+        }
+
+
+        var dbBaskets = await dbBasketsQuery
             .Include(x => x.Customer)
             .Skip((pagination.Page - 1) * pagination.PerPage)
             .Take(pagination.PerPage)
             .ToListAsync();
-        var totalBasketQuantity = await _context.Baskets
+        var totalBasketQuantity = await dbBasketsQuery
             .Include(x => x.BasketItems)
             .CountAsync();
 

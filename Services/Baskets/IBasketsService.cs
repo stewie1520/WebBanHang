@@ -6,14 +6,13 @@ using WebBanHang.DTOs.Commons;
 
 namespace WebBanHang.Services.Baskets
 {
-     public interface IBasketsService
-    {
-        Task<ServiceResponse<GetBasketDto>> CreateBasketAsync(CreateBasketDto basket);
-        Task<ServiceResponse<IEnumerable<GetBasketWithoutItemDto>>> GetAllBasketsAsync(PaginationParam pagination, int type = 0);
+  public interface IBasketsService
+  {
+    Task<ServiceResponse<GetBasketDto>> CreateBasketAsync(CreateBasketDto basket);
+    Task<ServiceResponse<IEnumerable<GetBasketWithoutItemDto>>> GetAllBasketsAsync(PaginationParam pagination, QueryBasketDto query);
 
-        Task<ServiceResponse<GetBasketDto>> GetBasketAsync(int basketId);
+    Task<ServiceResponse<GetBasketDto>> GetBasketAsync(int basketId);
 
-        Task<ServiceResponse<GetBasketDto>> UpdateBasketStatusAsync(UpdateBasketStatusDto basket);
-
-    }
+    Task<ServiceResponse<GetBasketDto>> UpdateBasketStatusAsync(UpdateBasketStatusDto basket);
+  }
 }
