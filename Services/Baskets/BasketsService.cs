@@ -178,7 +178,9 @@ namespace WebBanHang.Services.Baskets
         var dbBasket = await _context.Baskets
             .Include(x => x.BasketItems)
             .ThenInclude(x => x.Product)
+            .ThenInclude(x => x.Images)
             .Include(x => x.Customer)
+            .ThenInclude(x => x.Addresses)
             .FirstOrDefaultAsync(c => c.Id == basketId);
 
         if (dbBasket == null)
