@@ -17,6 +17,7 @@ namespace WebBanHang.DTOs.Baskets
     public GetCustomerDto Customer { get; set; }
     [Required]
     public IEnumerable<GetBasketItemDto> BasketItems { get; set; }
+    public int CustomerAddressIndex { get; set; }
     [Required]
     public string Note { get; set; }
     [Required]
