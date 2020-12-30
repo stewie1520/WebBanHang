@@ -12,7 +12,8 @@ namespace WebBanHang.Services.Baskets
         Task<ServiceResponse<IEnumerable<GetBasketWithoutItemDto>>> GetAllBasketsAsync(PaginationParam pagination, int type = 0);
 
         Task<ServiceResponse<GetBasketDto>> GetBasketAsync(int basketId);
-
+        Task<ServiceResponse<IEnumerable<GetBasketDto>>> GetAllBasketsByCustomerAsync(PaginationParam pagination, int type = 0);
+        Task<ServiceResponse<GetBasketDto>> GetBasketByCustomerAsync(int basketId);
         Task<ServiceResponse<GetBasketDto>> UpdateBasketStatusAsync(UpdateBasketStatusDto basket);
 
     }

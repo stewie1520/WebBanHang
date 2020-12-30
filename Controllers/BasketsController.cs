@@ -56,6 +56,33 @@ namespace WebBanHang.Controllers
 
             return BadRequest(res);
         }
+        [HttpGet("/customer")]
+        [Authorize]
+        public async Task<IActionResult> GetAllBasketsByCustomer([FromQuery] PaginationParam pagination, [FromQuery] int type = 0)
+        {
+            var res = await _service.GetAllBasketsByCustomerAsync(pagination, type);
+
+            if (res.Success)
+            {
+                return Ok(res);
+            }
+
+            return BadRequest(res);
+        }
+        [HttpGet("/customer/{basketId}")]
+        [Authorize]
+        public async Task<IActionResult> GetBasketByCustomer(int basketId)
+        {
+            var res = await _service.GetBasketByCustomerAsync(basketId);
+
+            if (res.Success)
+            {
+                return Ok(res);
+            }
+
+            return BadRequest(res);
+        }
+
         [HttpPut("")]
         [Authorize]
         public async Task<IActionResult> UpdateBasket([FromBody] UpdateBasketStatusDto basketStatus){

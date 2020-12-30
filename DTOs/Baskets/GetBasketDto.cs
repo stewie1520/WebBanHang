@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using WebBanHang.DTOs.BasketItems;
+using WebBanHang.DTOs.Customers;
 using WebBanHang.Models;
 
 namespace WebBanHang.DTOs.Baskets
@@ -13,7 +14,7 @@ namespace WebBanHang.DTOs.Baskets
         public bool IsPaid { get; set; }
         public BasketStatus Status { get; set; } = BasketStatus.Ordering;
         [Required]
-        public int? CustomerId { get; set; }
+        public GetCustomerDto Customer { get; set; }
         [Required]
         public IEnumerable<GetBasketItemDto> BasketItems { get; set; }
         [Required]

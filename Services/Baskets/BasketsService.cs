@@ -17,6 +17,8 @@ using Microsoft.VisualBasic;
 using WebBanHang.DTOs.Commons;
 using WebBanHang.Commons;
 using WebBanHang.Services.Exceptions;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace WebBanHang.Services.Baskets
 {
@@ -27,13 +29,15 @@ namespace WebBanHang.Services.Baskets
         private readonly IMapper _mapper;
         private readonly ICustomersService _customerService;
         private readonly IBasketItemsService _basketItemService;
-        public BasketsService(DataContext context, IMapper mapper, ILogger<BasketsService> logger, ICustomersService customerService, IBasketItemsService basketItemService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public BasketsService(DataContext context, IMapper mapper, ILogger<BasketsService> logger, ICustomersService customerService, IBasketItemsService basketItemService, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _mapper = mapper;
             _logger = logger;
             _customerService = customerService;
             _basketItemService = basketItemService;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<ServiceResponse<GetBasketDto>> CreateBasketAsync(CreateBasketDto createBasketDto)
         {
@@ -186,6 +190,82 @@ namespace WebBanHang.Services.Baskets
                 return response;
             }
         }
+        public async Task<ServiceResponse<GetBasketDto>> GetBasketByCustomerAsync(int basketId)
+        {
+            var response = new ServiceResponse<GetBasketDto>();
+            var userEmail = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            try
+            {
+                var dbBasket = await _context.Baskets
+                    .Include(b => b.BasketItems)
+                    .ThenInclude(b => b.Product)  
+                    .Include(b => b.Customer)
+                    .FirstOrDefaultAsync(b => b.Id == basketId && b.Customer.Email == userEmail);
+
+                if (dbBasket == null)
+                {
+                    throw new BasketNotFoundException();
+                }
+
+                response.Data = _mapper.Map<GetBasketDto>(dbBasket);
+
+                return response;
+            }
+            catch (BaseServiceException ex)
+            {
+                response.Success = false;
+                response.Message = ex.ErrorMessage;
+                response.Code = ex.Code;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.BASKET_UNEXPECTED_ERROR;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+        }
+
+        public async Task<ServiceResponse<IEnumerable<GetBasketDto>>> GetAllBasketsByCustomerAsync(PaginationParam pagination, int type = 0)
+        {
+            var response = new ServiceResponse<IEnumerable<GetBasketDto>>();
+            try
+            {
+                var userEmail = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var basketsInDB = await _context.Baskets
+                    .Include(b => b.BasketItems)
+                    .ThenInclude(b => b.Product)
+                    .Include(b => b.Customer)
+                    .Where(b => b.Customer.Email == userEmail)
+                    .Skip((pagination.Page - 1) * pagination.PerPage)
+                    .Take(pagination.PerPage)
+                    .ToListAsync();
+
+                var totalBasketQuantity = await _context.Baskets
+                    .Include(b => b.Customer)
+                    .Where(b => b.Customer.Email == userEmail)
+                    .CountAsync();
+
+                response.Pagination = PaginationHelper.CreatePagination(pagination, totalBasketQuantity);
+
+                response.Data = basketsInDB.Select(basket => _mapper.Map<GetBasketDto>(basket));
+                return response;
+            }
+            catch(Exception ex){
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Code = ErrorCode.BASKET_NOT_FOUND_ERROR;
+
+                _logger.LogError(ex.Message, ex.StackTrace);
+                return response;
+            }
+
+        }
 
         public async Task<ServiceResponse<GetBasketDto>> UpdateBasketStatusAsync(UpdateBasketStatusDto updateBasketStatusDto)
         {
@@ -222,5 +302,7 @@ namespace WebBanHang.Services.Baskets
                 return response;
             }
         }
+
+        
     }
 }
