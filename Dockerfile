@@ -1,31 +1,18 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
-
+FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /app
 
-EXPOSE 3001
-
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
-
-WORKDIR /src
-
-COPY ["WebBanHang.csproj", ""]
-
-RUN dotnet restore "./WebBanHang.csproj"
-
+COPY *.sln .
 COPY . .
+RUN dotnet restore
 
-WORKDIR "/src/."
+RUN dotnet publish -c Release -o out
 
-RUN dotnet build "WebBanHang.csproj" -c Release -o /app/build
-
-FROM build AS publish
-
-RUN dotnet publish "WebBanHang.csproj" -c Release -o /app/publish
-
-FROM base AS final
-
+FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS runtime
 WORKDIR /app
+COPY --from=build /app/out ./
 
-COPY --from=publish /app/publish .
+# Optional: Set this here if not setting it from docker-compose.yml
+# ENV ASPNETCORE_ENVIRONMENT Development
+EXPOSE 5000
 
 ENTRYPOINT ["dotnet", "WebBanHang.dll"]

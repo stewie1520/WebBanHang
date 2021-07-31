@@ -162,8 +162,6 @@ namespace WebBanHang
         setupAction.SwaggerEndpoint("/swagger/WebBanHang/swagger.json", "WebBanHang");
       });
 
-      app.UseHttpsRedirection();
-
       app.UseRouting();
 
       app.UseAuthentication();
